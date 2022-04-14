@@ -5,6 +5,7 @@
 	import NotFound from '../src/pages/NotFound.svelte'
 	import Login from '../src/pages/Login.svelte'
 	import Home from '../src/pages/Home.svelte'
+	import Curr from '../src/pages/curr/Curr.svelte'
 	import Admin from '../src/pages/admin/Admin.svelte'
 	import Adminrule from '../src/pages/adminrule/Adminrule.svelte'
 	import Log from '../src/pages/log/Log.svelte'
@@ -51,6 +52,12 @@
 						path_api: path_api,
 					},
 					component: Adminrule,
+				}),
+			"/curr": wrap({
+					props: {
+						path_api: path_api,
+					},
+					component: Curr,
 				}),
 			"/log": wrap({
 					props: {

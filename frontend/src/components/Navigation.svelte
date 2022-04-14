@@ -35,7 +35,7 @@
                     <li><a use:link href="/pasaran">PASARAN</a></li>
                     <li><a use:link href="/admin">ADMIN MANAGEMENT</a></li>
                     <li><a use:link href="/adminrule">ADMIN RULE</a></li>
-                    <li><a use:link href="/currency">CURRENCY</a></li>
+                    <li><a use:link href="/curr">CURRENCY</a></li>
                     <li><a use:link href="/log">LOG MANAGEMENT</a></li>
                   </ul>
                 </li>
@@ -66,6 +66,7 @@
                   <li><a use:link href="/log"  class="text-sm">LOG MANAGEMENT</a></li>
                   <li><a use:link href="/admin"  class="text-sm">ADMIN MANAGEMENT</a></li>
                   <li><a use:link href="/adminrule"  class="text-sm">ADMIN RULE</a></li>
+                  <li><a use:link href="/curr"  class="text-sm">CURRENCY</a></li>
                 </ul>
             </li>
             <li><a class="text-sm" use:link href="/setting">SETTING</a></li>

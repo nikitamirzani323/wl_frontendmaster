@@ -4,6 +4,7 @@
 
     export let path_api = ""
     let listHome = [];
+    let listcurrency = [];
     let record = "";
     let totalrecord = 0;
     let token = localStorage.getItem("token");
@@ -20,7 +21,7 @@
             },
             body: JSON.stringify({
                 master: master,
-                page: "COMPANY_HOME",
+                page: "COMPANY-VIEW",
             }),
         });
         const json = await res.json();
@@ -45,7 +46,7 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                company_search: "",
+                master: master,
             }),
         });
         const json = await res.json();
@@ -56,54 +57,46 @@
             if (json.status == 200) {
                 record = json.record;
                 totalrecord = record.length;
+                let recordlistcurr = json.listcurrency;
                 if (record != null) {
+                    let home_status_text = "";
                     let home_status_class = "";
-                    let home_winlose_class = "text-blue-700";
-                    let home_winlosetemp_class = "text-blue-700";
-                    let home_selisihwinlose_class = "text-blue-700";
                     for (var i = 0; i < record.length; i++) {
-                        let selisihwinlose = parseInt(record[i]["company_winlosetemp"]) - parseInt(record[i]["company_winlose"])
-                        if(record[i]["company_status"] == "ACTIVE"){
+                        if(record[i]["company_status"] == "Y"){
                             home_status_class = "bg-[#8BC34A] text-black"
+                            home_status_text = "ACTIVE"
                         }else{
                             home_status_class = "bg-red-600 text-white"
-                        }
-                        if (parseInt(record[i]["company_winlose"]) > 0) {
-                            home_winlose_class = "text-blue-700";
-                        } else {
-                            home_winlose_class = "text-red-500";
-                        }
-                        if (parseInt(record[i]["company_winlosetemp"]) > 0) {
-                            home_winlosetemp_class = "text-blue-700";
-                        } else {
-                            home_winlosetemp_class = "text-red-500";
-                        }
-                        if (selisihwinlose > 0) {
-                            home_selisihwinlose_class = "text-blue-700";
-                        } else {
-                            home_selisihwinlose_class = "text-red-500";
+                            home_status_text = "DEACTIVE"
                         }
                         listHome = [
                             ...listHome,
                             {
-                                home_no: record[i]["company_no"],
+                                home_no: i+1,
                                 home_idcompany: record[i]["company_idcompany"],
                                 home_startjoin: record[i]["company_startjoin"],
                                 home_endjoin: record[i]["company_endjoin"],
-                                home_curr: record[i]["company_curr"],
-                                home_name: record[i]["company_name"],
-                                home_owner: record[i]["company_owner"],
-                                home_phone: record[i]["company_phone"],
-                                home_email: record[i]["company_email"],
-                                home_periode: record[i]["company_periode"],
-                                home_winlose: record[i]["company_winlose"],
-                                home_winlosetemp: record[i]["company_winlosetemp"],
-                                home_winlose_class: home_winlose_class,
-                                home_winlosetemp_class: home_winlosetemp_class,
-                                home_selisihwinlose: selisihwinlose,
-                                home_selisihwinlose_class: home_selisihwinlose_class,
-                                home_status: record[i]["company_status"],
+                                home_curr: record[i]["company_idcurr"],
+                                home_name: record[i]["company_nmcompany"],
+                                home_owner: record[i]["company_nmowner"],
+                                home_phone: record[i]["company_phoneowner"],
+                                home_email: record[i]["company_emailowner"],
+                                home_urlendpoint: record[i]["company_urlendpoint"],
+                                home_create: record[i]["company_create"],
+                                home_update: record[i]["company_update"],
+                                home_status: home_status_text,
                                 home_status_class: home_status_class,
+                                
+                            },
+                        ];
+                    }
+                }
+                if (recordlistcurr != null) {
+                    for (let i = 0; i < recordlistcurr.length; i++) {
+                        listcurrency = [
+                            ...listcurrency,
+                            {
+                                curr_idcurr:recordlistcurr[i]["curr_idcurr"],
                             },
                         ];
                     }
@@ -141,6 +134,7 @@
         {token}
         {master}
         {listHome}
+        {listcurrency}
         {totalrecord}/>
 {/if}
 <input type="checkbox" id="my-modal-notiffirst" class="modal-toggle" bind:checked={isModalNotif}>

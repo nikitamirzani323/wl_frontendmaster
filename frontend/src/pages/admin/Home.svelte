@@ -17,22 +17,14 @@
     let page = "Admin Management";
     let sData = "New";
     let isModal_Form_New = false
-    let isModal_Form_Listipaddress = false
     let isModalLoading = false
     let isModalNotif = false
     let loader_class = "hidden"
     let loader_msg = "Sending..."
     let buttonLoading_class = "btn btn-primary"
     let msg_error = "";
-    let admin_listip = [];
-    let tab_menu_1 = "bg-sky-600 text-white"
-    let tab_menu_2 = ""
-    let panel_edit = true
-    let panel_iplist = false
-    let admin_tipe = "ADMIN";
     let searchHome = "";
     let filterHome = [];
-    let form_field_ipaddress = "";
     let isInput_username_enabled = true;
     let admin_create_field = ""
     let admin_update_field = ""
@@ -42,8 +34,8 @@
             .string()
             .required("Username is Required")
             .matches(
-                /^[a-zA-Z0-9]+$/,
-                "Username must Character A-Z or a-z or 1-9"
+                /^[a-zA-z0-9]+$/,
+                "Username must Character a-z or 1-9"
             )
             .min(4, "Username must be at least 4 Character")
             .max(20, "Username must be at most 20 Character"),
@@ -52,12 +44,12 @@
             .string()
             .required("Nama is Required")
             .matches(
-                /^[a-zA-z0-9]+$/,
+                /^[a-zA-z0-9 ]+$/,
                 "Nama must Character A-Z or a-z or 1-9"
             )
             .min(4, "Nama must be at least 4 Character")
-            .max(20, "Nama must be at most 20 Character"),
-        admin_idrule_field: yup.number().required("Admin Rule is Required"),
+            .max(50, "Nama must be at most 50 Character"),
+        admin_idrule_field: yup.string().required("Admin Rule is Required"),
         admin_status_field: yup.string().required("Status is Required"),
     });
     const { form, errors, handleChange, handleSubmit } = createForm({
@@ -65,7 +57,7 @@
             admin_username_field: "",
             admin_password_field: "",
             admin_name_field: "",
-            admin_idrule_field: "0",
+            admin_idrule_field: "",
             admin_status_field: "",
         },
         validationSchema: schema,
@@ -82,15 +74,7 @@
     async function SaveTransaksi(username, password, name, rule,status) {
         let flag = true;
         msg_error = "";
-        const regexExp = /^[a-zA-z0-9]+$/gi;
-        let flag_password = regexExp.test(password)
-        if(password != ""){
-            if(!flag_password){
-                flag = false;
-                msg_error += "The Format Password invalid\n Password must Character A-Z or a-z or 1-9";
-            }
-        }
-        if (rule == "0") {
+        if (rule == "") {
             flag = false;
             msg_error += "The Admin Rule is required";
         }
@@ -110,11 +94,11 @@
                 },
                 body: JSON.stringify({
                     sdata: sData,
-                    idruleadmin: parseInt(rule),
                     page: "ADMIN-SAVE",
-                    username: username,
+                    username: username.toLowerCase(),
                     password: password,
-                    nama: name,
+                    name: name,
+                    rule: rule,
                     status: status,
                 }),
             });
@@ -131,7 +115,7 @@
                         $form.admin_username_field = "";
                         $form.admin_password_field = "";
                         $form.admin_name_field = "";
-                        $form.admin_idrule_field = "0";
+                        $form.admin_idrule_field = "";
                         $form.admin_status_field = "";
                     }
                 } else if (json.status == 403) {
@@ -146,83 +130,12 @@
                 RefreshHalaman();
             }
         } else {
-            alert(msg_error);
-        }
-    }
-    async function SaveIpaddress() {
-        let flag = true;
-        let totaliplist = admin_listip.length;
-        msg_error = "";
-        if (form_field_ipaddress == "") {
-            flag = false;
-            msg_error += "The Ipaddress is required\n";
-        }
-        const regexExp = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/gi;
-        let flag_ip = regexExp.test(form_field_ipaddress)
-        if(!flag_ip){
-            flag = false;
-            msg_error += "The Format Ipaddress invalid\n";
-        }
-        if(totaliplist > 5){
-            flag = false;
-            msg_error += "Maximal 5 Ipaddress Active\n";
-        }
-        if (flag) {
-            buttonLoading_class = "btn loading"
-            loader_class = "inline-block"
-            loader_msg = "Sending..."
-            const res = await fetch(path_api+"api/saveadminiplist", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({
-                    sData: "New",
-                    page: "ADMIN-SAVE",
-                    username: $form.admin_username_field,
-                    ipaddress: form_field_ipaddress,
-                }),
-            });
-            const json = await res.json();
-            if (json.status == 200) {
-                loader_msg = json.message
-                EditData($form.admin_username_field)
-                form_field_ipaddress = "";
-            } else if (json.status == 403) {
-                loader_msg = json.message
-            } else {
-                loader_msg = json.message;
+            if(msg_error != ""){
+                isModalNotif = true;
             }
-            buttonLoading_class = "btn btn-primary"
-            setTimeout(function () {
-                loader_class = "hidden";
-            }, 1000);
-        } else {
-            alert(msg_error);
         }
     }
-    async function deleteIpList(e) {
-        const res = await fetch(path_api+"api/deleteadminiplist", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + token,
-            },
-            body: JSON.stringify({
-                idcompiplist: parseInt(e),
-                username: $form.admin_username_field,
-                page:"ADMIN-SAVE",
-            }),
-        });
-        const json = await res.json();
-        if (json.status == 200) {
-            admin_listip = [];
-            EditData($form.admin_username_field)
-        }else if(json.status == 403){
-            alert(json.message)
-        }
-    }
+    
     const EntryData = (tipeentry,username,name,rule,status,create,update) => {
         if(tipeentry == "Edit"){
             sData = "Edit"
@@ -249,33 +162,16 @@
         EntryData("New","","","","","","")
         
     };
-    const handleNewListIp = () => {
-        isModal_Form_Listipaddress = true;
-    }
-    const ChangeTabMenu = (e) => {
-        if(e == "menu_2"){
-            tab_menu_1 = ""
-            tab_menu_2 = "bg-sky-600 text-white"
-            panel_edit = false
-            panel_iplist = true
-        }else{
-            tab_menu_1 = "bg-sky-600 text-white"
-            tab_menu_2 = ""
-            panel_edit = true
-            panel_iplist = false
-        }
-    }
+    
     function clearField(){
         if(sData == "Edit"){
             admin_listrule = []
-            admin_listip = []
         } 
         $form.admin_username_field = "";
         $form.admin_password_field = "";
         $form.admin_name_field = "";
-        $form.admin_idrule_field = "0";
+        $form.admin_idrule_field = "";
         $form.admin_status_field = "";
-        form_field_ipaddress = "";
     }
     
     $: {
@@ -382,6 +278,8 @@
                     input_autofocus={false}
                     input_required={true}
                     input_tipe="text"
+                    input_maxlength_text="20"
+                    input_text_class="lowercase"
                     input_invalid={$errors.admin_username_field.length > 0}
                     bind:value={$form.admin_username_field}
                     input_id="admin_username_field"
@@ -412,9 +310,9 @@
                     bind:value={$form.admin_idrule_field}
                     invalid={$errors.admin_idrule_field.length > 0} 
                     class="w-full rounded px-3  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
-                    <option disabled selected value="0">--Pilih Admin Rule--</option>
+                    <option disabled selected value="">--Pilih Admin Rule--</option>
                     {#each admin_listrule as rec}
-                    <option value="{rec.adminrule_idruleadmin}">{rec.adminrule_idruleadmin}</option>
+                    <option value="{rec.adminrule_idruleadmin}">{rec.adminrule_nmadmin}</option>
                     {/each}
                 </select>
                 {#if $errors.admin_idrule_field}
@@ -427,6 +325,7 @@
                     input_autofocus={false}
                     input_required={true}
                     input_tipe="text"
+                    input_maxlength_text="50"
                     input_invalid={$errors.admin_name_field.length > 0}
                     bind:value={$form.admin_name_field}
                     input_id="admin_name_field"
@@ -466,32 +365,7 @@
     </slot:template>
 </Modal_popup>
 
-<input type="checkbox" id="my-modal-formipaddress" class="modal-toggle" bind:checked={isModal_Form_Listipaddress}>
-<Modal_popup
-    modal_popup_id="my-modal-formipaddress"
-    modal_popup_title="New IPAddress"
-    modal_popup_class="select-none max-w-full lg:max-w-xl overflow-hidden">
-    <slot:template slot="modalpopup_body">
-        <div class="flex flex-auto flex-col overflow-auto gap-5 mt-2 ">
-            <div class="mt-2">
-                <Input_custom
-                    input_autofocus={false}
-                    input_required={true}
-                    input_tipe="text"
-                    bind:value={form_field_ipaddress}
-                    input_id="ipaddress"
-                    input_placeholder="IPAddress"/>
-            </div>
-        </div>
-        <div class="flex flex-wrap justify-end align-middle p-[0.75rem] mt-2">
-            <button
-                on:click={() => {
-                    SaveIpaddress();
-                }}  
-                class="{buttonLoading_class}">Submit</button>
-        </div>
-    </slot:template>
-</Modal_popup>
+
 
 <input type="checkbox" id="my-modal-notif" class="modal-toggle" bind:checked={isModalNotif}>
 <Modal_alert 

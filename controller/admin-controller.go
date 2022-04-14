@@ -78,13 +78,13 @@ func Admin(c *fiber.Ctx) error {
 }
 func Saveadmin(c *fiber.Ctx) error {
 	type payload_saveadmin struct {
-		Sdata         string `json:"sdata" `
-		Master        string `json:"master" `
-		Page          string `json:"page" `
-		Domain_id     int    `json:"domain_id"`
-		Domain_name   string `json:"domain_name" `
-		Domain_tipe   string `json:"domain_tipe" `
-		Domain_status string `json:"domain_status" `
+		Sdata          string `json:"sdata" `
+		Page           string `json:"page" `
+		Admin_username string `json:"username"`
+		Admin_password string `json:"password" `
+		Admin_name     string `json:"name" `
+		Admin_rule     string `json:"rule" `
+		Admin_status   string `json:"status" `
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
@@ -110,14 +110,14 @@ func Saveadmin(c *fiber.Ctx) error {
 		SetBody(map[string]interface{}{
 			"client_hostname": hostname,
 			"sdata":           client.Sdata,
-			"master":          client.Master,
 			"page":            client.Page,
-			"domain_id":       client.Domain_id,
-			"domain_name":     client.Domain_name,
-			"domain_tipe":     client.Domain_tipe,
-			"domain_status":   client.Domain_status,
+			"admin_username":  client.Admin_username,
+			"admin_password":  client.Admin_password,
+			"admin_nama":      client.Admin_name,
+			"admin_rule":      client.Admin_rule,
+			"admin_status":    client.Admin_status,
 		}).
-		Post(PATH + "api/savedomain")
+		Post(PATH + "api/saveadmin")
 	if err != nil {
 		log.Println(err.Error())
 	}

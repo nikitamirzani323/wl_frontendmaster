@@ -94,6 +94,7 @@
                             ...admin_listrule,
                             {
                                 adminrule_idruleadmin:recordlistrule[i]["adminrule_idruleadmin"],
+                                adminrule_nmadmin:recordlistrule[i]["adminrule_idruleadmin"].toUpperCase(),
                             },
                         ];
                     }

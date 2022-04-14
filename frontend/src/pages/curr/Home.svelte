@@ -64,7 +64,7 @@
                 },
                 body: JSON.stringify({
                     sdata: sData,
-                    page: "ADMIN-SAVE",
+                    page: "CURRENCY-SAVE",
                     idcurr: idcurr.toUpperCase(),
                     name: idcurr.toUpperCase(),
                 }),

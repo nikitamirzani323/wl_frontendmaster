@@ -19,7 +19,7 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                page: "ADMIN-VIEW",
+                page: "CURRENCY-VIEW",
             }),
         });
         const json = await res.json();

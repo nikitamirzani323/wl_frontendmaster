@@ -282,9 +282,8 @@
                     <table class="table table-compact w-full mt-1">
                         <thead>
                             <tr>
-                                <th colspan="2">PERIODE</th>
-                                <th colspan="2">PREDIKSI</th>
-                                <th colspan="2">REPORT WINLOSE</th>
+                                <th colspan="2">COMPANY</th>
+                                <th colspan="2">CURRENCY</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -293,21 +292,14 @@
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
-                                        value="PERIODE-VIEW"/>
+                                        value="COMPANY-VIEW"/>
                                 </td>
                                 <td width="*">VIEW</td>
                                 <td width="1%">
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
-                                        value="PREDIKSI-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input
-                                        bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="REPORTWINLOSE-VIEW"/>
+                                        value="CURRENCY-VIEW"/>
                                 </td>
                                 <td width="*">VIEW</td>
                             </tr>
@@ -316,10 +308,16 @@
                                     <input
                                     bind:group={adminrule_rule_field}
                                     type="checkbox"
-                                    value="PERIODE-SAVE"/>
+                                    value="COMPANY-SAVE"/>
                                 </td>
                                 <td width="*">SAVE</td>
-                                <td colspan="4">&nbsp;</td>
+                                <td width="1%">
+                                    <input
+                                    bind:group={adminrule_rule_field}
+                                    type="checkbox"
+                                    value="CURRENCY-SAVE"/>
+                                </td>
+                                <td width="*">SAVE</td>
                             </tr>
                         </tbody>
                     </table>

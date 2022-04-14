@@ -48,7 +48,7 @@
                     localStorage.setItem("master", username);
                     window.location.href = "/";
                 }else{
-                    msg_error +="Sistem Sedang Menghadapi Masalah<br> Silahkah Hubungi Administrator"
+                    msg_error += json.message
                 }
             }
         }else{

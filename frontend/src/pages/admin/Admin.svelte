@@ -1,14 +1,19 @@
 <script>
     import Home from "../admin/Home.svelte";
+    import Modal_alert from '../../components/Modal_alert.svelte' 
     export let path_api = ""
     let listHome = [];
     let record = "";
     let totalrecord = 0;
     let token = localStorage.getItem("token");
+    let master = localStorage.getItem("master");
     let akses_page = false;
+    let isModalNotif = false;
+    let msg_error = ""
     let admin_listrule = [];
     async function initapp() {
-        const res = await fetch(path_api+"api/home", {
+        msg_error = ""
+        const res = await fetch(path_api+"api/init", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -22,69 +27,85 @@
         if (json.status === 400) {
             logout();
         } else if (json.status == 403) {
-            alert(json.message);
+            msg_error = json.message;
             akses_page = false;
         } else {
             akses_page = true;
-            initAdmin();
+            initHome();
+        }
+        if(msg_error != ""){
+            isModalNotif = true;
         }
     }
-    async function initAdmin() {
-        const res = await fetch(path_api+"api/alladmin", {
+    async function initHome() {
+        listHome = []
+        admin_listrule = []
+        const res = await fetch(path_api+"api/admin", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
+                master: master,
             }),
         });
         const json = await res.json();
-        if (json.status == 200) {
-            record = json.record;
-            totalrecord = record.length;
-            let recordlistrule = json.listruleadmin;
-            let status_class = "";
-            if (record != null) {
-                for (var i = 0; i < record.length; i++) {
-                    if (record[i]["admin_status"] == "ACTIVE") {
-                        status_class = "bg-[#8BC34A] "
-                    } else {
-                        status_class = "bg-[#E91E63] text-white"
+        if (!res.ok) {
+			isModalNotif = true;
+            msg_error = "Maaf Saat Ini Anda Tidak Bisa Mengakses Halaman Ini"
+		}else{
+            if (json.status == 200) {
+                record = json.record;
+                totalrecord = record.length;
+                let recordlistrule = json.listadminrule;
+                let status_class = "";
+                let no = 0;
+                if (record != null) {
+                    for (var i = 0; i < record.length; i++) {
+                        no = no + 1;
+                        if (record[i]["admin_status"] == "ACTIVE") {
+                            status_class = "bg-[#8BC34A] "
+                        } else {
+                            status_class = "bg-[#E91E63] text-white"
+                        }
+                        listHome = [
+                            ...listHome,
+                            {
+                                home_no: no,
+                                home_username: record[i]["admin_username"],
+                                home_nama: record[i]["admin_nama"],
+                                home_rule: record[i]["admin_rule"],
+                                home_timezone: record[i]["admin_timezone"],
+                                home_joindate: record[i]["admin_joindate"],
+                                home_lastlogin: record[i]["admin_lastlogin"],
+                                home_lastipaddres: record[i]["admin_lastipaddres"],
+                                home_status: record[i]["admin_status"],
+                                home_create: record[i]["admin_create"],
+                                home_update: record[i]["admin_update"],
+                                home_statusclass: status_class,
+                            },
+                        ];
                     }
-                    listHome = [
-                        ...listHome,
-                        {
-                            admin_no: record[i]["admin_no"],
-                            admin_username: record[i]["admin_username"],
-                            admin_nama: record[i]["admin_nama"],
-                            admin_tipe: record[i]["admin_tipe"],
-                            admin_rule: record[i]["admin_rule"],
-                            admin_timezone: record[i]["admin_timezone"],
-                            admin_joindate: record[i]["admin_joindate"],
-                            admin_lastlogin: record[i]["admin_lastlogin"],
-                            admin_lastipaddres: record[i]["admin_lastipaddres"],
-                            admin_status: record[i]["admin_status"],
-                            admin_statusclass: status_class,
-                        },
-                    ];
                 }
-            }
-            if (recordlistrule != null) {
-                for (let i = 0; i < recordlistrule.length; i++) {
-                    admin_listrule = [
-                        ...admin_listrule,
-                        {
-                            adminrule_idruleadmin:
-                                recordlistrule[i]["adminrule_idruleadmin"],
-                            adminrule_name: recordlistrule[i]["adminrule_name"],
-                        },
-                    ];
+                if (recordlistrule != null) {
+                    for (let i = 0; i < recordlistrule.length; i++) {
+                        admin_listrule = [
+                            ...admin_listrule,
+                            {
+                                adminrule_idruleadmin:recordlistrule[i]["adminrule_idruleadmin"],
+                            },
+                        ];
+                    }
                 }
+            }else {
+                isModalNotif = true;
+                msg_error = "Maaf Sistem Sedang Mengalami Masalah"
             }
-        } else {
-            logout();
         }
+        setTimeout(function () {
+            isModalNotif = false;
+        }, 1000);
     }
     async function logout() {
         localStorage.clear();
@@ -95,7 +116,7 @@
         admin_listrule = [];
         totalrecord = 0;
         setTimeout(function () {
-            initAdmin();
+            initHome();
         }, 1000);
     };
     const handleLogout = (e) => {
@@ -113,3 +134,7 @@
         {listHome}
         {totalrecord}/>
 {/if}
+<input type="checkbox" id="my-modal-notiffirst" class="modal-toggle" bind:checked={isModalNotif}>
+<Modal_alert 
+    modal_tipe="notifikasi" modal_id="my-modal-notiffirst" 
+    modal_title="Information" modal_message="{msg_error}"  />

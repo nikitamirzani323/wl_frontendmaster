@@ -95,5 +95,7 @@ func Init() *fiber.App {
 	app.Post("/api/savedomain", controller.Savedomain)
 	app.Post("/api/admin", controller.Admin)
 	app.Post("/api/saveadmin", controller.Saveadmin)
+	app.Post("/api/adminrule", controller.Adminrule)
+	app.Post("/api/saveadminrule", controller.Saveadminrule)
 	return app
 }

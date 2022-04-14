@@ -149,6 +149,7 @@
             admin_update_field = update;
             isModal_Form_New = true;
         }else{
+            sData = "New"
             isInput_username_enabled = true;
             clearField()
             isModal_Form_New = true;

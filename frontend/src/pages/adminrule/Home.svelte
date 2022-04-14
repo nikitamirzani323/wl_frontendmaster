@@ -35,11 +35,11 @@
             .string()
             .required("Rule is Required")
             .matches(
-                /^[a-zA-z0-9 ]+$/,
+                /^[a-zA-z0-9]+$/,
                 "Rule must Character A-Z or a-z or 1-9"
             )
             .min(4, "Rule must be at least 4 Character")
-            .max(50, "Rule must be at most 50 Character"),
+            .max(30, "Rule must be at most 30 Character"),
     });
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: {
@@ -67,8 +67,8 @@
                 body: JSON.stringify({
                     sdata: sData,
                     page: "ADMINRULE-SAVE",
-                    idrule: adminrule_id,
-                    nama: name,
+                    idrule: name,
+                    rule: adminrule_rule_field.toString(),
                 }),
             });
             const json = await res.json();
@@ -95,93 +95,30 @@
                 RefreshHalaman();
             }
         } else {
-            alert(msg_error);
-        }
-    }
-    async function Updateconfig() {
-        let flag = false;
-        msg_error = "";
-        if (adminrule_rule_field == "") {
-            flag = true;
-            msg_error += "The List is required\n";
-        }
-        if (flag == false) {
-            buttonLoading2_class = "btn loading"
-            loader_class = "inline-block"
-            loader_msg = "Sending..."
-            const res = await fetch(path_api+"api/saveadminruleconf", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({
-                    sdata: sData,
-                    page: "ADMINRULE-SAVE",
-                    idrule: adminrule_id,
-                    rule: adminrule_rule_field.toString(),
-                }),
-            });
-            const json = await res.json();
-            if (json.status == 200) {
-                loader_msg = json.message;
-            } else if (json.status == 403) {
-                loader_msg = json.message;;
-            } else {
-                loader_msg = json.message;
-            }
-            buttonLoading2_class = "btn btn-primary"
-            setTimeout(function () {
-                loader_class = "hidden";
-            }, 1000);
-        } else {
-            alert(msg_error);
-        }
-    }
-    async function EditData(e,y) {
-        if(e != ""){
-            adminrule_id = e;
-            adminrule_rule_field = "";
-            isModalLoading = true;
-            modal_width = "max-w-4xl";
-            sData = "Edit";
-            $form.home_name_field = y;
-            const res = await fetch(path_api+"api/editadminrule", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
-                },
-                body: JSON.stringify({
-                    idrule: e,
-                }),
-            });
-            const json = await res.json();
-            let record = json.record;
-            if (json.status === 400) {
-                dispatch("handleLogout", "call");
-            }else if(json.status === 200) {
-                isModal_Form_New = true;
-                isModalLoading = false;
-                for (let i = 0; i < record.length; i++) {
-                    adminrule_rule_field = record[i]["adminrule_rule"];
-                }
-            }else{
-                isModalLoading = false;
+            if(msg_error != ""){
                 isModalNotif = true;
-                msg_error = "Silahkan Hubungi Administrator"
             }
         }
     }
+    const EntryData = (tipeentry,name,rule) => {
+        if(tipeentry == "Edit"){
+            sData = "Edit"
+            modal_width = "max-w-3xl"
+            $form.home_name_field = name
+            adminrule_rule_field= rule
+        }else{
+            sData = "New"
+            modal_width = "max-w-xl"
+            clearField()
+        }
+        isModal_Form_New = true;
+    }
+    
     const RefreshHalaman = () => {
         dispatch("handleRefreshData", "call");
     };
     const NewData = () => {
-        sData = "New";
-        clearField()
-        adminrule_id = "";
-        modal_width = "max-w-xl"
-        isModal_Form_New = true;
+        EntryData("New","","")
     };
     
    
@@ -235,14 +172,14 @@
                     {#each filterHome as rec}
                     <tr>
                         <td on:click={() => {
-                            EditData(rec.home_id,rec.home_nama);
+                            EntryData("Edit",rec.home_id,rec.home_rule);
                             }} class="text-center text-xs cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                         </td>
                         <td class="text-xs lg:text-sm align-top text-center">{rec.home_no}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_nama}</td>
+                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_id}</td>
                     </tr>
                     {/each}
                 </tbody>
@@ -277,6 +214,8 @@
                         input_invalid={$errors.home_name_field.length > 0}
                         bind:value={$form.home_name_field}
                         input_id="home_name_field"
+                        input_maxlength_text="30"
+                        input_text_class="lowercase"
                         input_placeholder="Rule"/>
                     {#if $errors.home_name_field}
                         <small class="text-pink-600 text-[11px]">{$errors.home_name_field}</small>
@@ -304,6 +243,8 @@
                                 input_invalid={$errors.home_name_field.length > 0}
                                 bind:value={$form.home_name_field}
                                 input_id="home_name_field"
+                                input_maxlength_text="30"
+                                input_text_class="lowercase"
                                 input_placeholder="Rule"/>
                             {#if $errors.home_name_field}
                                 <small class="text-pink-600 text-[11px]">{$errors.home_name_field}</small>
@@ -439,11 +380,6 @@
                             </tr>
                         </tbody>
                     </table>  
-                    <button
-                        on:click={() => {
-                            Updateconfig();
-                        }}  
-                        class="{buttonLoading2_class} btn-block">Submit</button> 
                 </div>
             </div>
         {/if}

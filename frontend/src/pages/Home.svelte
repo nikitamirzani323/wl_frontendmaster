@@ -2,7 +2,7 @@
     export let path_api = "";
     let token = localStorage.getItem("token");
     async function initapp() {
-		const res = await fetch(path_api+"api/home", {
+		const res = await fetch(path_api+"api/init", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -21,5 +21,5 @@
 		localStorage.clear();
 		window.location.href = "/";
 	}
-    // initapp();
+    initapp();
 </script>

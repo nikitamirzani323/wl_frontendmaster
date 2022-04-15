@@ -132,7 +132,6 @@
         on:handleLogout={handleLogout}
         {path_api}
         {token}
-        {master}
         {listHome}
         {listcurrency}
         {totalrecord}/>

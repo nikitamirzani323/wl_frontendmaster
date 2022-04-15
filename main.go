@@ -19,7 +19,7 @@ func main() {
 	go func() {
 		port := os.Getenv("PORT")
 		if port == "" {
-			port = "6061"
+			port = "2021"
 		}
 		if err := app.Listen(":" + port); err != nil {
 			log.Panic(err)

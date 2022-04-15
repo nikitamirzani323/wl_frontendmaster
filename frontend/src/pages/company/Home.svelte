@@ -257,9 +257,6 @@
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                master: master,
-                sData: "New",
-                page: "COMPANY_HOME",
                 company: idcompany,
             }),
         });
@@ -270,7 +267,7 @@
                 totalrecordadmin = record.length;
                 let company_admin_status_class = "";
                 for (var i = 0; i < record.length; i++) {
-                    if(record[i]["company_admin_status"] == "ACTIVE"){
+                    if(record[i]["companyadmin_status"] == "ACTIVE"){
                         company_admin_status_class = "bg-[#8BC34A] text-black"
                     }else{
                         company_admin_status_class = "bg-red-600 text-white"
@@ -278,15 +275,15 @@
                     listAdmin = [
                         ...listAdmin,
                         {
-                            company_admin_username:record[i]["company_admin_username"],
-                            company_admin_typeadmin:record[i]["company_admin_typeadmin"],
-                            company_admin_nama: record[i]["company_admin_nama"],
-                            company_admin_status:record[i]["company_admin_status"],
-                            company_admin_status_class:company_admin_status_class,
-                            company_admin_lastlogin:record[i]["company_admin_lastlogin"],
-                            company_admin_lastipaddres:record[i]["company_admin_lastipaddres"],
-                            company_admin_create:record[i]["company_admin_create"],
-                            company_admin_update:record[i]["company_admin_update"],
+                            companyadmin_username:record[i]["companyadmin_username"],
+                            companyadmin_name:record[i]["companyadmin_name"],
+                            companyadmin_type:record[i]["companyadmin_type"],
+                            companyadmin_status:record[i]["companyadmin_status"],
+                            companyadmin_status_class:company_admin_status_class,
+                            companyadmin_lastlogin:record[i]["companyadmin_lastlogin"],
+                            companyadmin_lastipaddress:record[i]["companyadmin_lastipaddress"],
+                            companyadmin_create:record[i]["companyadmin_create"],
+                            companyadmin_update:record[i]["companyadmin_update"],
                         },
                     ];
                 }
@@ -946,6 +943,7 @@
     const EntryData = (tipeentry,idcomp,nmcompany,ownername,ownerphone,owneremail,endpoint,curr,status,create,update) => {
         if(tipeentry == "Edit"){
             clearField();
+            
             sData = "Edit";
             modal_width = "max-w-7xl"
             if(status == "ACTIVE"){
@@ -964,6 +962,7 @@
             select_status_field = status;
             home_create = create;
             home_update = update;
+            call_listadmin();
         }else{
             sData = "New";
             modal_width = "max-w-2xl"
@@ -1632,7 +1631,11 @@
                         <li on:click={() => {
                                 ChangeTabMenu("menu_listpasaran");
                             }}
-                            class="items-center {tab_listpasaran} px-2 py-1.5 text-xs lg:text-sm cursor-pointer rounded-md outline outline-1 outline-offset-1 outline-sky-600">List Pasaran</li>
+                            class="items-center {tab_listpasaran} px-2 py-1.5 text-xs lg:text-sm cursor-pointer rounded-md outline outline-1 outline-offset-1 outline-sky-600">List Member</li>
+                            <li on:click={() => {
+                                ChangeTabMenu("menu_listpasaran");
+                            }}
+                            class="items-center {tab_listpasaran} px-2 py-1.5 text-xs lg:text-sm cursor-pointer rounded-md outline outline-1 outline-offset-1 outline-sky-600">List Transaksi</li>
                     </ul>
                     {#if panel_listadmin}
                         <h2 class="text-lg font-bold">List Admin</h2>
@@ -1661,19 +1664,19 @@
                                         {#each filterListAdmin as rec}
                                             <tr>
                                                 <td class="cursor-pointer" on:click={() => {
-                                                        NewDataAdmin("Edit",rec.company_admin_username,rec.company_admin_nama,rec.company_admin_status);
+                                                        NewDataAdmin("Edit",rec.companyadmin_username,rec.companyadmin_name,rec.companyadmin_status);
                                                     }}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                     </svg>
                                                 </td>
                                                 <td class="text-xs text-center align-top">
-                                                    <span class="{rec.company_admin_status_class} text-center rounded-md p-1 px-2 shadow-lg ">{rec.company_admin_status}</span>
+                                                    <span class="{rec.companyadmin_status_class} text-center rounded-md p-1 px-2 shadow-lg ">{rec.companyadmin_status}</span>
                                                 </td>
-                                                <td class="text-xs text-left align-top">{rec.company_admin_typeadmin}</td>
-                                                <td class="text-xs text-center align-top">{rec.company_admin_lastlogin}</td>
-                                                <td class="text-xs text-center align-top">{rec.company_admin_lastipaddres}</td>
-                                                <td class="text-xs text-left align-top">{rec.company_admin_username}</td>
+                                                <td class="text-xs text-left align-top">{rec.companyadmin_type}</td>
+                                                <td class="text-xs text-center align-top">{rec.companyadmin_lastlogin}</td>
+                                                <td class="text-xs text-center align-top">{rec.companyadmin_lastipaddress}</td>
+                                                <td class="text-xs text-left align-top">{rec.companyadmin_username}</td>
                                             </tr>
                                         {/each}
                                     {:else}

@@ -17,17 +17,6 @@
                 <li><a href="/">DASHBOARD</a></li>
                 <li tabindex="0">
                   <a class="justify-between">
-                    TOGEL
-                    <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>
-                  </a>
-                  <ul class="p-2 bg-white">
-                    <li><a use:link href="/periode">PERIODE</a></li>
-                    <li><a use:link href="/prediksi">PREDIKSI</a></li>
-                    <li><a use:link href="/report">REPORT WINLOSE</a></li>
-                  </ul>
-                </li>
-                <li tabindex="0">
-                  <a class="justify-between">
                     MASTER
                     <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/></svg>
                   </a>
@@ -47,11 +36,11 @@
             <li><a class="text-sm" href="/">DASBOARD</a></li>
             <li tabindex="0">
               <a class="text-sm">
-                COMPANY
+                AGEN
                 <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
               </a>
               <ul class="p-2 bg-white">
-                <li><a use:link href="/company" class="text-sm">COMPANY</a></li>
+                <li><a use:link href="/agen" class="text-sm">AGEN</a></li>
               </ul>
             </li>
             <li tabindex="0">
@@ -63,7 +52,6 @@
                   <li><a use:link href="/log"  class="text-sm">LOG MANAGEMENT</a></li>
                   <li><a use:link href="/admin"  class="text-sm">ADMIN MANAGEMENT</a></li>
                   <li><a use:link href="/adminrule"  class="text-sm">ADMIN RULE</a></li>
-                  <li><a use:link href="/curr"  class="text-sm">CURRENCY</a></li>
                 </ul>
             </li>
             <li><a class="text-sm" use:link href="/setting">SETTING</a></li>

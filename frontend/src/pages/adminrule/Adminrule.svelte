@@ -2,6 +2,7 @@
     import Modal_alert from '../../components/Modal_alert.svelte'
     import Home from "../adminrule/Home.svelte";
     export let path_api = ""
+    export let font_size = ""
     let listHome = [];
     let record = "";
     let totalrecord = 0;
@@ -37,6 +38,7 @@
         }
     }
     async function initHome() {
+        listHome = [];
         const res = await fetch(path_api+"api/adminrule", {
             method: "POST",
             headers: {
@@ -54,15 +56,18 @@
 		}else{
             if (json.status == 200) {
                 record = json.record;
-                totalrecord = record.length;
                 if (record != null) {
+                    totalrecord = record.length;
                     for (var i = 0; i < record.length; i++) {
                         listHome = [
                             ...listHome,
                             {
                                 home_no: i+1,
-                                home_id: record[i]["adminrule_idadmin"],
+                                home_id: record[i]["adminrule_idrule"],
+                                home_nmrule: record[i]["adminrule_nmrule"],
                                 home_rule: record[i]["adminrule_rule"],
+                                home_create: record[i]["adminrule_create"],
+                                home_update: record[i]["adminrule_update"],
                             },
                         ];
                     }
@@ -94,6 +99,7 @@
         on:handleRefreshData={handleRefreshData}
         on:handleLogout={handleLogout}
         {path_api}
+        {font_size}
         {token}
         {listHome}
         {totalrecord}/>

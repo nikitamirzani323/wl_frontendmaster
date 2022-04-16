@@ -1,4 +1,4 @@
-module github.com/nikitamirzani323/go_mastertoto
+module github.com/nikitamirzani323/wl_frontendsuper
 
 go 1.17
 

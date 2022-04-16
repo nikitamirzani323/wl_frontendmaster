@@ -3,12 +3,14 @@
     import { createForm } from "svelte-forms-lib";
     import * as yup from "yup";
     import Input_custom from '../../components/Input.svelte' 
+    import Button_custom from '../../components/button_custom.svelte'
     import Modal_alert from '../../components/Modal_alert.svelte' 
     import Modal_popup from '../../components/Modal_popup.svelte' 
     import Loader from '../../components/Loader.svelte' 
     import Panel from '../../components/Panel_default.svelte' 
 
     export let path_api = "";
+    export let font_size = "";
     export let token = "";
     export let listHome = [];
     export let totalrecord = 0;
@@ -21,10 +23,10 @@
     let modal_width = "max-w-xl"
     let loader_class = "hidden"
     let loader_msg = "Sending..."
-    let buttonLoading_class = "btn btn-primary"
-    let buttonLoading2_class = "btn btn-primary"
+    let buttonLoading_flag = false;
+    let buttonLoading_class = "";
     let msg_error = "";
-    let adminrule_id = "";
+    let adminrule_id = 0;
     let adminrule_rule_field = "";
     let searchHome = "";
     let filterHome = [];
@@ -35,11 +37,11 @@
             .string()
             .required("Rule is Required")
             .matches(
-                /^[a-zA-z0-9]+$/,
+                /^[a-zA-z0-9 ]+$/,
                 "Rule must Character A-Z or a-z or 1-9"
             )
             .min(4, "Rule must be at least 4 Character")
-            .max(30, "Rule must be at most 30 Character"),
+            .max(50, "Rule must be at most 30 Character"),
     });
     const { form, errors, handleChange, handleSubmit } = createForm({
         initialValues: {
@@ -55,7 +57,7 @@
         msg_error = "";
         
         if (flag) {
-            buttonLoading_class = "btn loading"
+            buttonLoading_flag = true
             loader_class = "inline-block"
             loader_msg = "Sending..."
             const res = await fetch(path_api+"api/saveadminrule", {
@@ -67,7 +69,8 @@
                 body: JSON.stringify({
                     sdata: sData,
                     page: "ADMINRULE-SAVE",
-                    idrule: name,
+                    idrule: adminrule_id,
+                    nmrule: name,
                     rule: adminrule_rule_field.toString(),
                 }),
             });
@@ -88,7 +91,8 @@
                 } else {
                     loader_msg = json.message;
                 }
-                buttonLoading_class = "btn btn-primary"
+                buttonLoading_flag = false
+                isModal_Form_New = false;
                 setTimeout(function () {
                     loader_class = "hidden";
                 }, 1000);
@@ -100,11 +104,12 @@
             }
         }
     }
-    const EntryData = (tipeentry,name,rule) => {
+    const EntryData = (tipeentry,idrule,namerule,rule) => {
         if(tipeentry == "Edit"){
             sData = "Edit"
             modal_width = "max-w-3xl"
-            $form.home_name_field = name
+            adminrule_id = idrule
+            $form.home_name_field = namerule
             adminrule_rule_field= rule
         }else{
             sData = "New"
@@ -120,9 +125,8 @@
     const NewData = () => {
         EntryData("New","","")
     };
-    
-   
     function clearField(){
+        adminrule_id = 0;
         $form.home_name_field = "";
     }
     
@@ -162,9 +166,11 @@
         <table class="table table-compact w-full ">
             <thead class="sticky top-0">
                 <tr>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center"></th>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">NO</th>
-                    <th width="*" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">RULE</th>
+                    <th width="1%" class="bg-[#475289] {font_size} text-white text-center"></th>
+                    <th width="1%" class="bg-[#475289] {font_size} text-white text-center">NO</th>
+                    <th width="*" class="bg-[#475289] {font_size} text-white text-left">RULE</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">CREATE</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">UPDATE</th>
                 </tr>
             </thead>
             {#if filterHome != ""}
@@ -172,21 +178,23 @@
                     {#each filterHome as rec}
                     <tr>
                         <td on:click={() => {
-                            EntryData("Edit",rec.home_id,rec.home_rule);
+                            EntryData("Edit",rec.home_id,rec.home_nmrule,rec.home_rule);
                             }} class="text-center text-xs cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                         </td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_no}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_id}</td>
+                        <td class="{font_size} align-top text-center">{rec.home_no}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_nmrule}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_create}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_update}</td>
                     </tr>
                     {/each}
                 </tbody>
             {:else}
                 <tbody>
                     <tr>
-                        <td colspan="3" class="text-center">
+                        <td colspan="4" class="text-center">
                             <progress class="self-start progress progress-primary w-56"></progress>
                         </td>
                     </tr>
@@ -214,8 +222,7 @@
                         input_invalid={$errors.home_name_field.length > 0}
                         bind:value={$form.home_name_field}
                         input_id="home_name_field"
-                        input_maxlength_text="30"
-                        input_text_class="lowercase"
+                        input_maxlength_text="50"
                         input_placeholder="Rule"/>
                     {#if $errors.home_name_field}
                         <small class="text-pink-600 text-[11px]">{$errors.home_name_field}</small>
@@ -223,11 +230,14 @@
                 </div>
             </div>
             <div class="flex flex-wrap justify-end align-middle p-[0.75rem] mt-2">
-                <button
+                <Button_custom 
                     on:click={() => {
                         handleSubmit();
-                    }}  
-                    class="{buttonLoading_class}">Submit</button>
+                    }}
+                    button_disable={buttonLoading_flag}
+                    button_class=""
+                    button_disable_class="{buttonLoading_class}"
+                    button_title="Submit" />
             </div>
         {/if}
         {#if sData=="Edit"}
@@ -252,11 +262,14 @@
                         </div>
                     </div>
                     <div class="flex flex-wrap justify-end align-middle  mt-2">
-                        <button
+                        <Button_custom 
                             on:click={() => {
                                 handleSubmit();
-                            }}  
-                            class="{buttonLoading_class} btn-block">Submit</button>
+                            }}
+                            button_disable={buttonLoading_flag}
+                            button_class="btn-block"
+                            button_disable_class="btn-block"
+                            button_title="Submit" />
                     </div>
                 </div>
                 <div class="w-full p-2">
@@ -264,26 +277,26 @@
                     <table class="table table-compact w-full">
                         <thead>
                             <tr>
-                                <th colspan="2">DASHBOARD</th>
+                                <th class="{font_size}" colspan="2">DASHBOARD</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td width="1%">
                                     <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="DASHBOARD-VIEW"/>
+                                        bind:group={adminrule_rule_field}
+                                        type="checkbox"
+                                        value="DASHBOARD-VIEW"/>
                                 </td>
-                                <td width="*">VIEW</td>
+                                <td class="{font_size}" width="*">VIEW</td>
                             </tr>
                         </tbody>
                     </table>
                     <table class="table table-compact w-full mt-1">
                         <thead>
                             <tr>
-                                <th colspan="2">COMPANY</th>
-                                <th colspan="2">CURRENCY</th>
+                                <th class="{font_size}" colspan="2">AGEN</th>
+                                <th class="{font_size}" colspan="2"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -292,41 +305,27 @@
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
-                                        value="COMPANY-VIEW"/>
+                                        value="AGEN-VIEW"/>
                                 </td>
-                                <td width="*">VIEW</td>
-                                <td width="1%">
-                                    <input
-                                        bind:group={adminrule_rule_field}
-                                        type="checkbox"
-                                        value="CURRENCY-VIEW"/>
-                                </td>
-                                <td width="*">VIEW</td>
+                                <td class="{font_size}" width="*">VIEW</td>
                             </tr>
                             <tr>
                                 <td width="1%">
                                     <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="COMPANY-SAVE"/>
+                                        bind:group={adminrule_rule_field}
+                                        type="checkbox"
+                                        value="COMPANY-SAVE"/>
                                 </td>
-                                <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="CURRENCY-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
+                                <td class="{font_size}" width="*">SAVE</td>
                             </tr>
                         </tbody>
                     </table>
                     <table class="table table-compact w-full mt-1">
                         <thead>
                             <tr>
-                                <th colspan="2">PASARAN</th>
-                                <th colspan="2">ADMIN MANAGEMENT</th>
-                                <th colspan="2">ADMIN RULE</th>
+                                <th class="{font_size}" colspan="2">LOG MANAGEMENT</th>
+                                <th class="{font_size}" colspan="2">ADMIN MANAGEMENT</th>
+                                <th class="{font_size}" colspan="2">ADMIN RULE</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -335,46 +334,40 @@
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
-                                        value="PASARAN-VIEW"/>
+                                        value="LOG-VIEW"/>
                                 </td>
-                                <td width="*">VIEW</td>
+                                <td class="{font_size}" width="*">VIEW</td>
                                 <td width="1%">
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
                                         value="ADMIN-VIEW"/>
                                 </td>
-                                <td width="*">VIEW</td>
+                                <td class="{font_size}" width="*">VIEW</td>
                                 <td width="1%">
                                     <input
                                         bind:group={adminrule_rule_field}
                                         type="checkbox"
                                         value="ADMINRULE-VIEW"/>
                                 </td>
-                                <td width="*">VIEW</td>
+                                <td class="{font_size}" width="*">VIEW</td>
                             </tr>
                             <tr>
+                                <td colspan="2"></td>
                                 <td width="1%">
                                     <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="PASARAN-SAVE"/>
+                                        bind:group={adminrule_rule_field}
+                                        type="checkbox"
+                                        value="ADMIN-SAVE"/>
                                 </td>
-                                <td width="*">SAVE</td>
+                                <td class="{font_size}" width="*">SAVE</td>
                                 <td width="1%">
                                     <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="ADMIN-SAVE"/>
+                                        bind:group={adminrule_rule_field}
+                                        type="checkbox"
+                                        value="ADMINRULE-SAVE"/>
                                 </td>
-                                <td width="*">SAVE</td>
-                                <td width="1%">
-                                    <input
-                                    bind:group={adminrule_rule_field}
-                                    type="checkbox"
-                                    value="ADMINRULE-SAVE"/>
-                                </td>
-                                <td width="*">SAVE</td>
+                                <td class="{font_size}" width="*">SAVE</td>
                             </tr>
                         </tbody>
                     </table>  

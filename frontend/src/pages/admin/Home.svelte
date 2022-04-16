@@ -3,12 +3,15 @@
     import { createForm } from "svelte-forms-lib";
     import * as yup from "yup";
     import Input_custom from '../../components/Input.svelte' 
+    import Button_custom from '../../components/button_custom.svelte'
     import Modal_alert from '../../components/Modal_alert.svelte' 
     import Modal_popup from '../../components/Modal_popup.svelte' 
     import Loader from '../../components/Loader.svelte' 
+    import Panel_info from '../../components/Panel_info.svelte' 
     import Panel from '../../components/Panel_default.svelte' 
 
     export let path_api = "";
+    export let font_size = "";
     export let token = "";
     export let listHome = [];
     export let admin_listrule = [];
@@ -21,7 +24,8 @@
     let isModalNotif = false
     let loader_class = "hidden"
     let loader_msg = "Sending..."
-    let buttonLoading_class = "btn btn-primary"
+    let buttonLoading_flag = false;
+    let buttonLoading_class = "";
     let msg_error = "";
     let searchHome = "";
     let filterHome = [];
@@ -83,7 +87,7 @@
             msg_error += "The Status is required";
         }
         if (flag) {
-            buttonLoading_class = "btn loading"
+            buttonLoading_flag = true;
             loader_class = "inline-block"
             loader_msg = "Sending..."
             const res = await fetch(path_api+"api/saveadmin", {
@@ -123,7 +127,7 @@
                 } else {
                     loader_msg = json.message;
                 }
-                buttonLoading_class = "btn btn-primary"
+                buttonLoading_flag = false;
                 setTimeout(function () {
                     loader_class = "hidden";
                 }, 1000);
@@ -145,6 +149,11 @@
             $form.admin_name_field = name;
             $form.admin_idrule_field = rule;
             $form.admin_status_field = status;
+            $errors.admin_username_field = "";
+            $errors.admin_password_field = "";
+            $errors.admin_name_field = "";
+            $errors.admin_idrule_field = "";
+            $errors.admin_status_field = "";
             admin_create_field = create;
             admin_update_field = update;
             isModal_Form_New = true;
@@ -173,6 +182,11 @@
         $form.admin_name_field = "";
         $form.admin_idrule_field = "";
         $form.admin_status_field = "";
+        $errors.admin_username_field = "";
+        $errors.admin_password_field = "";
+        $errors.admin_name_field = "";
+        $errors.admin_idrule_field = "";
+        $errors.admin_status_field = "";
     }
     
     $: {
@@ -217,16 +231,16 @@
         <table class="table table-compact w-full">
             <thead class="sticky top-0">
                 <tr>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center"></th>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">NO</th>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">STATUS</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">TIMEZONE</th>
-                    <th width="11%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">IPADDRESS</th>
-                    <th width="15%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">LAST LOGIN</th>
-                    <th width="15%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">JOIN DATE</th>
-                    <th width="20%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">RULE</th>
-                    <th width="20%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">USERNAME</th>
-                    <th width="*" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">NAMA</th>
+                    <th width="1%" class="bg-[#475289] {font_size} text-white text-center"></th>
+                    <th width="1%" class="bg-[#475289] {font_size} text-white text-center">NO</th>
+                    <th width="1%" class="bg-[#475289] {font_size} text-white text-center">STATUS</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-center">TIMEZONE</th>
+                    <th width="11%" class="bg-[#475289] {font_size} text-white text-center">IPADDRESS</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-center">LAST LOGIN</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-center">JOIN DATE</th>
+                    <th width="20%" class="bg-[#475289] {font_size} text-white text-left">RULE</th>
+                    <th width="20%" class="bg-[#475289] {font_size} text-white text-left">USERNAME</th>
+                    <th width="*" class="bg-[#475289] {font_size} text-white text-left">NAMA</th>
                 </tr>
             </thead>
             {#if filterHome != ""}
@@ -240,15 +254,15 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                         </td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_no}</td>
-                        <td class="text-xs lg:text-sm align-top text-center"><span class="{rec.home_statusclass} text-center rounded-md p-1 px-2 shadow-lg">{rec.home_status}</span></td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_timezone}</td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_lastipaddres}</td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_lastlogin}</td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_joindate}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_rule}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_username}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_nama}</td>
+                        <td class="{font_size} align-top text-center">{rec.home_no}</td>
+                        <td class="{font_size} align-top text-center"><span class="{rec.home_statusclass} text-center rounded-md p-1 px-2">{rec.home_status}</span></td>
+                        <td class="{font_size} align-top text-center">{rec.home_timezone}</td>
+                        <td class="{font_size} align-top text-center">{rec.home_lastipaddres}</td>
+                        <td class="{font_size} align-top text-center">{rec.home_lastlogin}</td>
+                        <td class="{font_size} align-top text-center">{rec.home_joindate}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_rule}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_username}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_nama}</td>
                     </tr>
                     {/each}
                 </tbody>
@@ -310,7 +324,7 @@
                     on:change="{handleChange}"
                     bind:value={$form.admin_idrule_field}
                     invalid={$errors.admin_idrule_field.length > 0} 
-                    class="w-full rounded px-3  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
+                    class="w-full rounded px-3 text-sm lg:text-md  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
                     <option disabled selected value="">--Pilih Admin Rule--</option>
                     {#each admin_listrule as rec}
                     <option value="{rec.adminrule_idruleadmin}">{rec.adminrule_nmadmin}</option>
@@ -340,7 +354,7 @@
                     on:change="{handleChange}"
                     bind:value={$form.admin_status_field}
                     invalid={$errors.admin_status_field.length > 0} 
-                    class="w-full rounded px-3  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
+                    class="w-full text-sm lg:text-md rounded px-3  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
                     <option disabled selected value="">--Pilih Status--</option>
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="BANNED">BANNED</option>
@@ -350,18 +364,35 @@
                 {/if}
             </div>
             {#if sData == "Edit"}
-            <div class="text-[11px]">
-                Create : {admin_create_field} <br>
-                Update : {admin_update_field}
-            </div>
+                <Panel_info>
+                    <slot:template slot="panel_body">
+                        <table>
+                            <tr>
+                                <td>Create</td>
+                                <td>:</td>
+                                <td>{admin_create_field}</td>
+                            </tr>
+                            {#if admin_update_field != ""}
+                            <tr>
+                                <td>Modified</td>
+                                <td>:</td>
+                                <td>{admin_update_field}</td>
+                            </tr>
+                            {/if}
+                        </table>
+                    </slot:template>
+                </Panel_info>
             {/if}
         </div>
         <div class="flex flex-wrap justify-end align-middle p-[0.75rem] mt-2">
-            <button
+            <Button_custom 
                 on:click={() => {
                     handleSubmit();
-                }}  
-                class="{buttonLoading_class}">Submit</button>
+                }}
+                button_disable={buttonLoading_flag}
+                button_class=""
+                button_disable_class="{buttonLoading_class}"
+                button_title="Submit" />
         </div>
     </slot:template>
 </Modal_popup>

@@ -3,6 +3,7 @@
     import Modal_alert from '../../components/Modal_alert.svelte' 
 
     export let path_api = ""
+    export let font_size = ""
     let listHome = [];
     let listcurrency = [];
     let record = "";
@@ -63,10 +64,10 @@
                     let home_status_class = "";
                     for (var i = 0; i < record.length; i++) {
                         if(record[i]["company_status"] == "Y"){
-                            home_status_class = "bg-[#8BC34A] text-black"
+                            home_status_class = "bg-[#ebfbee] text-[#6ec07b]"
                             home_status_text = "ACTIVE"
                         }else{
-                            home_status_class = "bg-red-600 text-white"
+                            home_status_class = "bg-[#fde3e3] text-[#ea7779]"
                             home_status_text = "DEACTIVE"
                         }
                         listHome = [
@@ -131,6 +132,7 @@
         on:handleRefreshData={handleRefreshData}
         on:handleLogout={handleLogout}
         {path_api}
+        {font_size}
         {token}
         {listHome}
         {listcurrency}

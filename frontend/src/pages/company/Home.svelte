@@ -4,13 +4,16 @@
     import * as yup from "yup";
     import dayjs from "dayjs";
     import Input_custom from '../../components/Input.svelte' 
+    import Button_custom from '../../components/button_custom.svelte'
     import Modal_alert from '../../components/Modal_alert.svelte' 
     import Modal_popup from '../../components/Modal_popup.svelte' 
     import Loader from '../../components/Loader.svelte' 
     import Panel from '../../components/Panel_default.svelte' 
+    import Panel_info from '../../components/Panel_info.svelte' 
  
 
     export let path_api = "";
+    export let font_size = "";
     export let token = "";
     export let listHome = [];
     export let listcurrency = [];
@@ -27,8 +30,8 @@
     let modal_listadmin_width = "max-w-xl"
     let loader_class = "hidden"
     let loader_msg = "Sending..."
-    let buttonLoading_class = "btn btn-primary"
-    let buttonLoading2_class  = "btn btn-primary"
+    let buttonLoading_flag = false;
+    let buttonLoading_class = "btn-block";
     let msg_error = "";
     let idcompany = "";
     let listAdmin = [];
@@ -62,11 +65,6 @@
     let admin_email_field_error = "";
     let admin_phone_field_error = "";
     let admin_status_field_error = "";
-
-   
-    
-
-    
 
     let dispatch = createEventDispatcher();
     const schema = yup.object().shape({
@@ -142,7 +140,7 @@
             msg_error +="The Status is required<br>";
         }
         if (flag) {
-            buttonLoading_class = "btn loading"
+            buttonLoading_flag = true;
             loader_class = "inline-block"
             loader_msg = "Sending..."
             const res = await fetch(path_api+"api/savecompany", {
@@ -181,7 +179,7 @@
                 } else {
                     loader_msg = json.message;
                 }
-                buttonLoading_class = "btn btn-primary"
+                buttonLoading_flag = false;
                 setTimeout(function () {
                     loader_class = "hidden";
                 }, 1000);
@@ -239,7 +237,7 @@
             admin_status_field_error ="Status is required"
         }
         if(flag == false){
-            buttonLoading_class = "btn loading"
+            buttonLoading_flag = true;
             loader_class = "inline-block"
             loader_msg = "Sending..."
             const res = await fetch(path_api+"api/savecompanylistadmin", {
@@ -277,7 +275,7 @@
                 } else {
                     loader_msg = json.message;
                 }
-                buttonLoading_class = "btn btn-primary"
+                buttonLoading_flag = false;
                 setTimeout(function () {
                     loader_class = "hidden";
                 }, 1000);
@@ -305,9 +303,9 @@
                 let company_admin_status_class = "";
                 for (var i = 0; i < record.length; i++) {
                     if(record[i]["companyadmin_status"] == "ACTIVE"){
-                        company_admin_status_class = "bg-[#8BC34A] text-black"
+                        company_admin_status_class = "bg-[#ebfbee] text-[#6ec07b]"
                     }else{
-                        company_admin_status_class = "bg-red-600 text-white"
+                        company_admin_status_class = "bg-[#fde3e3] text-[#ea7779]"
                     }
                     listAdmin = [
                         ...listAdmin,
@@ -329,7 +327,6 @@
             }
         } 
     }
-    
 
     const RefreshHalaman = () => {
         dispatch("handleRefreshData", "call");
@@ -395,13 +392,11 @@
                 tab_listadmin = "bg-sky-600 text-white"
                 tab_listpasaran = ""
                 panel_listadmin = true
-                panel_listpasaran = false
                 break;
             case "menu_listmember":
                 tab_listadmin = ""
                 tab_listpasaran = "bg-sky-600 text-white"
                 panel_listadmin = false
-                panel_listpasaran = true
                 break;
         }
     }
@@ -443,7 +438,7 @@
         if (searchHome) {
             filterHome = listHome.filter(
                 (item) =>
-                    item.home_nama
+                    item.home_name
                         .toLowerCase()
                         .includes(searchHome.toLowerCase())
             );
@@ -486,16 +481,17 @@
         <table class="table table-compact w-full ">
             <thead class="sticky top-0">
                 <tr>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center"></th>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">NO</th>
-                    <th width="1%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">&nbsp;</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">START</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-center">END</th>
-                    <th width="5%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">IDCOMP</th>
-                    <th width="*" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">COMPANY</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">OWNER</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">EMAIL</th>
-                    <th width="10%" class="bg-[#6c7ae0] text-xs lg:text-sm text-white text-left">PHONE</th>
+                    <th width="1%" class="bg-[#475289] {font_size}  text-white text-center"></th>
+                    <th width="1%" class="bg-[#475289] {font_size}  text-white text-center">NO</th>
+                    <th width="1%" class="bg-[#475289] {font_size}  text-white text-center">STATUS</th>
+                    <th width="10%" class="bg-[#475289] {font_size}  text-white text-center">START JOIN</th>
+                    <th width="10%" class="bg-[#475289] {font_size}  text-white text-center">END JOIN</th>
+                    <th width="5%" class="bg-[#475289] {font_size}  text-white text-left">CURR</th>
+                    <th width="5%" class="bg-[#475289] {font_size}  text-white text-left">IDCOMP</th>
+                    <th width="*" class="bg-[#475289] {font_size}  text-white text-left">COMPANY</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">OWNER</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">EMAIL</th>
+                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">PHONE</th>
                 </tr>
             </thead>
             {#if filterHome != ""}
@@ -510,17 +506,18 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                         </td>
-                        <td class="text-xs lg:text-sm align-top text-center">{rec.home_no}</td>
-                        <td class="text-xs lg:text-sm align-top text-center">
-                            <span class="{rec.home_status_class} text-center rounded-md p-1 px-2 shadow-lg ">{rec.home_status}</span>
+                        <td class="{font_size} align-top text-center">{rec.home_no}</td>
+                        <td class="{font_size} align-top text-center">
+                            <span class="{rec.home_status_class} text-center rounded-md p-1 px-2">{rec.home_status}</span>
                         </td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_startjoin}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_endjoin}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_idcompany}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_name}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_owner}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_email}</td>
-                        <td class="text-xs lg:text-sm align-top text-left">{rec.home_phone}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_startjoin}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_endjoin}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_curr}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_idcompany}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_name}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_owner}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_email}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_phone}</td>
                         
                     </tr>
                     {/each}
@@ -645,7 +642,7 @@
                 <div>
                     <select
                         bind:value="{select_curr_field}" 
-                        class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm">
+                        class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm text-sm lg:text-md">
                         <option disabled value="" selected>--Pilih Currency--</option>
                         {#each listcurrency as rec }
                             <option value="{rec.curr_idcurr}">{rec.curr_idcurr}</option>
@@ -655,21 +652,23 @@
                 <div>
                     <select
                         bind:value="{select_status_field}" 
-                        class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm">
+                        class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm text-sm lg:text-md">
                         <option disabled value="" selected>--Pilih Status--</option>
                         <option value="Y">ACTIVE</option>
                         <option value="N">DEACTIVE</option>
                     </select>
                 </div>
                 <div class="col-span-2">
-                    <button
-                    on:click={() => {
-                        handleSubmit();
-                    }}  
-                    class="{buttonLoading_class} btn-block">Submit</button>
+                    <Button_custom 
+                        on:click={() => {
+                            handleSubmit();
+                        }}
+                        button_disable={buttonLoading_flag}
+                        button_class="btn-block"
+                        button_disable_class="{buttonLoading_class}"
+                        button_title="Submit" />
                 </div>    
-            </div>
-            
+            </div>          
         {/if}
         {#if sData=="Edit"}
             <div class="flex justify-between w-full gap-2">
@@ -790,19 +789,33 @@
                                 <option value="N">DEACTIVE</option>
                             </select>
                         </div>
-                        <div class="text-[11px] col-span-2">
-                            Create : {home_create}
-                            {#if home_update != ""}
-                            <br>
-                            Update : {home_update}
-                            {/if}
-                        </div>
+                        <Panel_info panel_body_class="col-span-2">
+                            <slot:template slot="panel_body">
+                                <table>
+                                    <tr>
+                                        <td>Create</td>
+                                        <td>:</td>
+                                        <td>{home_create}</td>
+                                    </tr>
+                                    {#if home_update != ""}
+                                    <tr>
+                                        <td>Modified</td>
+                                        <td>:</td>
+                                        <td>{home_update}</td>
+                                    </tr>
+                                    {/if}
+                                </table>
+                            </slot:template>
+                        </Panel_info>
                         <div class="col-span-2">
-                            <button
-                            on:click={() => {
-                                handleSubmit();
-                            }}  
-                            class="{buttonLoading_class} btn-block">Submit</button>
+                            <Button_custom 
+                                on:click={() => {
+                                    handleSubmit();
+                                }}
+                                button_disable={buttonLoading_flag}
+                                button_class="btn-block"
+                                button_disable_class="{buttonLoading_class}"
+                                button_title="Submit" />
                         </div>    
                     </div>
                 </div>
@@ -816,7 +829,7 @@
                                 ChangeTabMenu("menu_listpasaran");
                             }}
                             class="items-center {tab_listpasaran} px-2 py-1.5 text-xs lg:text-sm cursor-pointer rounded-md outline outline-1 outline-offset-1 outline-sky-600">List Member</li>
-                            <li on:click={() => {
+                        <li on:click={() => {
                                 ChangeTabMenu("menu_listpasaran");
                             }}
                             class="items-center {tab_listpasaran} px-2 py-1.5 text-xs lg:text-sm cursor-pointer rounded-md outline outline-1 outline-offset-1 outline-sky-600">List Transaksi</li>
@@ -829,18 +842,18 @@
                                 type="text" placeholder="Search by Username" class="input input-bordered w-full  rounded-md  focus:ring-0 focus:outline-none">
                             <button on:click={() => {
                                 EntryDataAdmin("New","","","","","");
-                                }}  class="btn bg-primary hover:bg-primary  rounded-md shadow-lg shadow-[#6eb5d8] border-none  ">New</button>
+                                }}  class="btn bg-primary hover:bg-primary  rounded-md  shadow-[#6eb5d8] border-none  m-0 h-1 min-h-[40px] shadow-lg ">New</button>
                         </div>
                         <div class="w-full  scrollbar-thin scrollbar-thumb-sky-300 scrollbar-track-sky-100 h-[400px] overflow-y-scroll mt-2">
                             <table class="table table-compact w-full">
                                 <thead class="sticky top-0">
                                     <tr>
-                                        <th width="1%" class="bg-[#6c7ae0] text-white text-xs text-center align-top">&nbsp;</th>
-                                        <th width="1%" class="bg-[#6c7ae0] text-white text-xs text-center align-top">STATUS</th>
-                                        <th width="7%" class="bg-[#6c7ae0] text-white text-xs text-left align-top">TYPE</th>
-                                        <th width="10%" class="bg-[#6c7ae0] text-white text-xs text-center align-top">LASTLOGIN</th>
-                                        <th width="10%" class="bg-[#6c7ae0] text-white text-xs text-center align-top">LASTIPADDRESS</th>
-                                        <th width="*" class="bg-[#6c7ae0] text-white text-xs text-left align-top">USERNAME</th>
+                                        <th width="1%" class="bg-[#475289] text-white {font_size} text-center align-top">&nbsp;</th>
+                                        <th width="1%" class="bg-[#475289] text-white {font_size} text-center align-top">STATUS</th>
+                                        <th width="7%" class="bg-[#475289] text-white {font_size} text-left align-top">TYPE</th>
+                                        <th width="10%" class="bg-[#475289] text-white {font_size} text-center align-top">LAST LOGIN</th>
+                                        <th width="10%" class="bg-[#475289] text-white {font_size} text-center align-top">LAST IPADDRESS</th>
+                                        <th width="*" class="bg-[#475289] text-white {font_size} text-left align-top">USERNAME</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -855,13 +868,13 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                     </svg>
                                                 </td>
-                                                <td class="text-xs text-center align-top">
-                                                    <span class="{rec.companyadmin_status_class} text-center rounded-md p-1 px-2 shadow-lg ">{rec.companyadmin_status}</span>
+                                                <td class="{font_size} text-center align-top">
+                                                    <span class="{rec.companyadmin_status_class} text-center rounded-md p-1 px-2 ">{rec.companyadmin_status}</span>
                                                 </td>
-                                                <td class="text-xs text-left align-top">{rec.companyadmin_type}</td>
-                                                <td class="text-xs text-center align-top">{rec.companyadmin_lastlogin}</td>
-                                                <td class="text-xs text-center align-top">{rec.companyadmin_lastipaddress}</td>
-                                                <td class="text-xs text-left align-top">{rec.companyadmin_username}</td>
+                                                <td class="{font_size} text-left align-top">{rec.companyadmin_type}</td>
+                                                <td class="{font_size} text-center align-top">{rec.companyadmin_lastlogin}</td>
+                                                <td class="{font_size} text-center align-top">{rec.companyadmin_lastipaddress}</td>
+                                                <td class="{font_size} text-left align-top">{rec.companyadmin_username}</td>
                                             </tr>
                                         {/each}
                                     {:else}
@@ -969,7 +982,7 @@
                     {/if}
             </div>
             <div>
-                <select class="select select-bordered w-full rounded-md focus:ring-0 focus:outline-none" bind:value="{admin_status_field}">
+                <select class="select select-bordered w-full rounded-md focus:ring-0 focus:outline-none text-sm lg:text-md" bind:value="{admin_status_field}">
                     <option disabled selected value="">--Pilih Status--</option>
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="DEACTIVE">DEACTIVE</option>
@@ -979,19 +992,33 @@
                 {/if}
             </div>
             {#if sDataAdmin == "Edit"}
-            <div class="text-[11px]">
-                Create : {admin_create}
-                {#if admin_update != ""}
-                    <br>
-                    Update : {admin_update}
-                {/if}
-            </div>
+            <Panel_info panel_body_class="col-span-2">
+                <slot:template slot="panel_body">
+                    <table>
+                        <tr>
+                            <td>Create</td>
+                            <td>:</td>
+                            <td>{admin_create}</td>
+                        </tr>
+                        {#if admin_update != ""}
+                        <tr>
+                            <td>Modified</td>
+                            <td>:</td>
+                            <td>{admin_update}</td>
+                        </tr>
+                        {/if}
+                    </table>
+                </slot:template>
+            </Panel_info>
             {/if}
-            <button
+            <Button_custom 
                 on:click={() => {
                     SaveTransaksiListAdmin();
-                }}  
-                class="{buttonLoading_class} btn-block">Submit</button>
+                }}
+                button_disable={buttonLoading_flag}
+                button_class=""
+                button_disable_class="{buttonLoading_class}"
+                button_title="Submit" />
         </div>
     </slot:template>
 </Modal_popup>

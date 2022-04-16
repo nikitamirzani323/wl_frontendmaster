@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/go_mastertoto/config"
+	"github.com/nikitamirzani323/wl_frontendsuper/config"
 )
 
 const PATH string = config.PATH_API

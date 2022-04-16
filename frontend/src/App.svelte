@@ -12,12 +12,12 @@
 	import Pasaran from '../src/pages/pasaran/Pasaran.svelte'
 	import Domain from '../src/pages/domain/Domain.svelte'
 	import Company from '../src/pages/company/Company.svelte'
-	import Periode from '../src/pages/periode/Periode.svelte'
-	import Prediksi from '../src/pages/prediksi/Prediksi.svelte'
 	import Report from '../src/pages/report/Report.svelte'
 	import Setting from '../src/pages/setting/Setting.svelte'
 	import Tailwindcss from './Tailwindcss.svelte'
 	export let path_api = "";
+	export let font_size = "";
+
   	let token = localStorage.getItem("token");
 	let routes = "";
 	let isNav = false;
@@ -38,76 +38,74 @@
 				"/": wrap({
 					props: {
 						path_api: path_api,
+						font_size: font_size,
 					},
 					component: Home,
 				}),
-			"/admin": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Admin,
-				}),
-			"/adminrule": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Adminrule,
-				}),
-			"/curr": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Curr,
-				}),
-			"/log": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Log,
-				}),
-			"/pasaran": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Pasaran,
-				}),
-			"/domain": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Domain,
-				}),
-			"/company": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Company,
-				}),
-			"/periode": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Periode,
-				}),
-			"/prediksi": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Prediksi,
-				}),
-			"/report": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Report,
-				}),
-			"/setting": wrap({
-					props: {
-						path_api: path_api,
-					},
-					component: Setting,
-				}),
-			"*": NotFound,
+				"/admin": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Admin,
+					}),
+				"/adminrule": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Adminrule,
+					}),
+				"/curr": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Curr,
+					}),
+				"/log": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Log,
+					}),
+				"/pasaran": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Pasaran,
+					}),
+				"/domain": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Domain,
+					}),
+				"/company": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Company,
+					}),
+				"/report": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Report,
+					}),
+				"/setting": wrap({
+						props: {
+							path_api: path_api,
+							font_size: font_size,
+						},
+						component: Setting,
+					}),
+				"*": NotFound,
 			};
   }
 </script>

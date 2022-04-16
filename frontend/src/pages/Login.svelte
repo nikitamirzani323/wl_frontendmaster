@@ -125,7 +125,7 @@
                 on:click={() => {
                     handleSubmit();
                 }} 
-                class="btn btn-primary rounded-md">Submit</button>
+                class="btn btn-primary rounded-md m-0 h-1 min-h-[40px] shadow-lg">Submit</button>
         </div>
     </div>
     

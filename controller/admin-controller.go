@@ -49,15 +49,15 @@ func Admin(c *fiber.Ctx) error {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	log.Println("Response Info:")
-	log.Println("  Error      :", err)
-	log.Println("  Status Code:", resp.StatusCode())
-	log.Println("  Status     :", resp.Status())
-	log.Println("  Proto      :", resp.Proto())
-	log.Println("  Time       :", resp.Time())
-	log.Println("  Received At:", resp.ReceivedAt())
-	log.Println("  Body       :\n", resp)
-	log.Println()
+	// log.Println("Response Info:")
+	// log.Println("  Error      :", err)
+	// log.Println("  Status Code:", resp.StatusCode())
+	// log.Println("  Status     :", resp.Status())
+	// log.Println("  Proto      :", resp.Proto())
+	// log.Println("  Time       :", resp.Time())
+	// log.Println("  Received At:", resp.ReceivedAt())
+	// log.Println("  Body       :\n", resp)
+	// log.Println()
 	result := resp.Result().(*responseadmin)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
@@ -83,7 +83,9 @@ func Saveadmin(c *fiber.Ctx) error {
 		Admin_username string `json:"username"`
 		Admin_password string `json:"password" `
 		Admin_name     string `json:"name" `
-		Admin_rule     string `json:"rule" `
+		Admin_email    string `json:"email" `
+		Admin_phone    string `json:"phone" `
+		Admin_idrule   int    `json:"idrule" `
 		Admin_status   string `json:"status" `
 	}
 	hostname := c.Hostname()
@@ -114,7 +116,9 @@ func Saveadmin(c *fiber.Ctx) error {
 			"admin_username":  client.Admin_username,
 			"admin_password":  client.Admin_password,
 			"admin_nama":      client.Admin_name,
-			"admin_rule":      client.Admin_rule,
+			"admin_email":     client.Admin_email,
+			"admin_phone":     client.Admin_phone,
+			"admin_idrule":    client.Admin_idrule,
 			"admin_status":    client.Admin_status,
 		}).
 		Post(PATH + "api/saveadmin")

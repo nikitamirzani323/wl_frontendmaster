@@ -9,6 +9,7 @@
     import Loader from '../../components/Loader.svelte' 
     import Panel_info from '../../components/Panel_info.svelte' 
     import Panel from '../../components/Panel_default.svelte' 
+import { intros } from "svelte/internal";
 
     export let path_api = "";
     export let font_size = "";
@@ -25,7 +26,7 @@
     let loader_class = "hidden"
     let loader_msg = "Sending..."
     let buttonLoading_flag = false;
-    let buttonLoading_class = "";
+    let buttonLoading_class = "btn-block";
     let msg_error = "";
     let searchHome = "";
     let filterHome = [];
@@ -53,7 +54,17 @@
             )
             .min(4, "Nama must be at least 4 Character")
             .max(50, "Nama must be at most 50 Character"),
-        admin_idrule_field: yup.string().required("Admin Rule is Required"),
+        admin_email_field: yup
+            .string()
+            .required("Email is Required")
+            .min(4, "Email must be at least 4 Character")
+            .max(150, "Email must be at most 150 Character"),
+        admin_phone_field: yup
+            .string()
+            .required("Phone is Required")
+            .min(4, "Phone must be at least 4 Character")
+            .max(30, "Phone must be at most 30 Character"),
+        admin_idrule_field: yup.string(),
         admin_status_field: yup.string().required("Status is Required"),
     });
     const { form, errors, handleChange, handleSubmit } = createForm({
@@ -61,7 +72,9 @@
             admin_username_field: "",
             admin_password_field: "",
             admin_name_field: "",
-            admin_idrule_field: "",
+            admin_email_field: "",
+            admin_phone_field: "",
+            admin_idrule_field: "0",
             admin_status_field: "",
         },
         validationSchema: schema,
@@ -70,18 +83,16 @@
                 values.admin_username_field,
                 values.admin_password_field,
                 values.admin_name_field,
+                values.admin_email_field,
+                values.admin_phone_field,
                 values.admin_idrule_field,
                 values.admin_status_field
             );
         },
     });
-    async function SaveTransaksi(username, password, name, rule,status) {
+    async function SaveTransaksi(username, password, name,email,phone ,rule,status) {
         let flag = true;
         msg_error = "";
-        if (rule == "") {
-            flag = false;
-            msg_error += "The Admin Rule is required";
-        }
         if(status == ""){
             flag = false;
             msg_error += "The Status is required";
@@ -102,7 +113,9 @@
                     username: username.toLowerCase(),
                     password: password,
                     name: name,
-                    rule: rule,
+                    email: email,
+                    phone: phone,
+                    idrule: parseInt(rule),
                     status: status,
                 }),
             });
@@ -140,18 +153,22 @@
         }
     }
     
-    const EntryData = (tipeentry,username,name,rule,status,create,update) => {
+    const EntryData = (tipeentry,username,name,email,phone,rule,status,create,update) => {
         if(tipeentry == "Edit"){
             sData = "Edit"
             isInput_username_enabled = false;
             $form.admin_username_field = username;
             $form.admin_password_field = "";
             $form.admin_name_field = name;
+            $form.admin_email_field = email;
+            $form.admin_phone_field = phone;
             $form.admin_idrule_field = rule;
             $form.admin_status_field = status;
             $errors.admin_username_field = "";
             $errors.admin_password_field = "";
             $errors.admin_name_field = "";
+            $errors.admin_email_field = "";
+            $errors.admin_phone_field = "";
             $errors.admin_idrule_field = "";
             $errors.admin_status_field = "";
             admin_create_field = create;
@@ -174,17 +191,18 @@
     };
     
     function clearField(){
-        if(sData == "Edit"){
-            admin_listrule = []
-        } 
         $form.admin_username_field = "";
         $form.admin_password_field = "";
         $form.admin_name_field = "";
-        $form.admin_idrule_field = "";
+        $form.admin_email_field = "";
+        $form.admin_phone_field = "";
+        $form.admin_idrule_field = "0";
         $form.admin_status_field = "";
         $errors.admin_username_field = "";
         $errors.admin_password_field = "";
         $errors.admin_name_field = "";
+        $errors.admin_email_field = "";
+        $errors.admin_phone_field = "";
         $errors.admin_idrule_field = "";
         $errors.admin_status_field = "";
     }
@@ -234,13 +252,14 @@
                     <th width="1%" class="bg-[#475289] {font_size} text-white text-center"></th>
                     <th width="1%" class="bg-[#475289] {font_size} text-white text-center">NO</th>
                     <th width="1%" class="bg-[#475289] {font_size} text-white text-center">STATUS</th>
-                    <th width="10%" class="bg-[#475289] {font_size} text-white text-center">TIMEZONE</th>
-                    <th width="11%" class="bg-[#475289] {font_size} text-white text-center">IPADDRESS</th>
+                    <th width="7%" class="bg-[#475289] {font_size} text-white text-center">IPADDRESS</th>
                     <th width="15%" class="bg-[#475289] {font_size} text-white text-center">LAST LOGIN</th>
                     <th width="15%" class="bg-[#475289] {font_size} text-white text-center">JOIN DATE</th>
-                    <th width="20%" class="bg-[#475289] {font_size} text-white text-left">RULE</th>
-                    <th width="20%" class="bg-[#475289] {font_size} text-white text-left">USERNAME</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">RULE</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">USERNAME</th>
                     <th width="*" class="bg-[#475289] {font_size} text-white text-left">NAMA</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">EMAIL</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">PHONE</th>
                 </tr>
             </thead>
             {#if filterHome != ""}
@@ -248,7 +267,9 @@
                     {#each filterHome as rec}
                     <tr>
                         <td on:click={() => {
-                            EntryData("Edit",rec.home_username,rec.home_nama,rec.home_rule,rec.home_status,rec.home_create,rec.home_update);
+                            EntryData("Edit",
+                                rec.home_username,rec.home_nama,rec.home_email,rec.home_phone,
+                                rec.home_idrule,rec.home_status,rec.home_create,rec.home_update);
                             }} class="text-center text-xs cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -256,13 +277,14 @@
                         </td>
                         <td class="{font_size} align-top text-center">{rec.home_no}</td>
                         <td class="{font_size} align-top text-center"><span class="{rec.home_statusclass} text-center rounded-md p-1 px-2">{rec.home_status}</span></td>
-                        <td class="{font_size} align-top text-center">{rec.home_timezone}</td>
                         <td class="{font_size} align-top text-center">{rec.home_lastipaddres}</td>
                         <td class="{font_size} align-top text-center">{rec.home_lastlogin}</td>
                         <td class="{font_size} align-top text-center">{rec.home_joindate}</td>
                         <td class="{font_size} align-top text-left">{rec.home_rule}</td>
                         <td class="{font_size} align-top text-left">{rec.home_username}</td>
                         <td class="{font_size} align-top text-left">{rec.home_nama}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_email}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_phone}</td>
                     </tr>
                     {/each}
                 </tbody>
@@ -286,8 +308,8 @@
     modal_popup_title="Entry/{sData}"
     modal_popup_class="select-none max-w-full lg:max-w-xl overflow-hidden">
     <slot:template slot="modalpopup_body">
-        <div class="flex flex-auto flex-col overflow-auto gap-5 mt-2 ">
-            <div class="mt-2">
+        <div class="grid grid-cols-2 gap-2 mt-2 ">
+            <div class="">
                 <Input_custom
                     input_onchange="{handleChange}"
                     input_autofocus={false}
@@ -309,6 +331,21 @@
                     input_onchange="{handleChange}"
                     input_autofocus={false}
                     input_required={true}
+                    input_tipe="text"
+                    input_maxlength_text="50"
+                    input_invalid={$errors.admin_name_field.length > 0}
+                    bind:value={$form.admin_name_field}
+                    input_id="admin_name_field"
+                    input_placeholder="Nama"/>
+                {#if $errors.admin_name_field}
+                    <small class="text-pink-600 text-[11px]">{$errors.admin_name_field}</small>
+                {/if}
+            </div>
+            <div class="">
+                <Input_custom
+                    input_onchange="{handleChange}"
+                    input_autofocus={false}
+                    input_required={true}
                     input_tipe="password"
                     input_attr="password"
                     input_invalid={$errors.admin_password_field.length > 0}
@@ -320,14 +357,29 @@
                 {/if}
             </div>
             <div class="">
+                <Input_custom
+                    input_onchange="{handleChange}"
+                    input_autofocus={false}
+                    input_required={true}
+                    input_tipe="text"
+                    input_maxlength_text="150"
+                    input_invalid={$errors.admin_email_field.length > 0}
+                    bind:value={$form.admin_email_field}
+                    input_id="admin_email_field"
+                    input_placeholder="Email"/>
+                {#if $errors.admin_email_field}
+                    <small class="text-pink-600 text-[11px]">{$errors.admin_email_field}</small>
+                {/if}
+            </div>
+            <div class="">
                 <select
                     on:change="{handleChange}"
                     bind:value={$form.admin_idrule_field}
                     invalid={$errors.admin_idrule_field.length > 0} 
                     class="w-full rounded px-3 text-sm lg:text-md  border border-gray-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 focus:outline-none input active:outline-none">
-                    <option disabled selected value="">--Pilih Admin Rule--</option>
+                    <option disabled selected value="0">--Pilih Admin Rule--</option>
                     {#each admin_listrule as rec}
-                    <option value="{rec.adminrule_idruleadmin}">{rec.adminrule_nmadmin}</option>
+                    <option value="{rec.adminrule_idrule}">{rec.adminrule_nmrule}</option>
                     {/each}
                 </select>
                 {#if $errors.admin_idrule_field}
@@ -340,13 +392,13 @@
                     input_autofocus={false}
                     input_required={true}
                     input_tipe="text"
-                    input_maxlength_text="50"
-                    input_invalid={$errors.admin_name_field.length > 0}
-                    bind:value={$form.admin_name_field}
-                    input_id="admin_name_field"
-                    input_placeholder="Nama"/>
-                {#if $errors.admin_name_field}
-                    <small class="text-pink-600 text-[11px]">{$errors.admin_name_field}</small>
+                    input_maxlength_text="30"
+                    input_invalid={$errors.admin_phone_field.length > 0}
+                    bind:value={$form.admin_phone_field}
+                    input_id="admin_phone_field"
+                    input_placeholder="Phone"/>
+                {#if $errors.admin_phone_field}
+                    <small class="text-pink-600 text-[11px]">{$errors.admin_phone_field}</small>
                 {/if}
             </div>
             <div class="">
@@ -363,34 +415,34 @@
                     <small class="text-pink-600 text-[11px]">{$errors.admin_status_field}</small>
                 {/if}
             </div>
-            {#if sData == "Edit"}
-                <Panel_info>
-                    <slot:template slot="panel_body">
-                        <table>
-                            <tr>
-                                <td>Create</td>
-                                <td>:</td>
-                                <td>{admin_create_field}</td>
-                            </tr>
-                            {#if admin_update_field != ""}
-                            <tr>
-                                <td>Modified</td>
-                                <td>:</td>
-                                <td>{admin_update_field}</td>
-                            </tr>
-                            {/if}
-                        </table>
-                    </slot:template>
-                </Panel_info>
-            {/if}
         </div>
-        <div class="flex flex-wrap justify-end align-middle p-[0.75rem] mt-2">
+        {#if sData == "Edit"}
+            <Panel_info panel_body_class="mt-2">
+                <slot:template slot="panel_body">
+                    <table>
+                        <tr>
+                            <td>Create</td>
+                            <td>:</td>
+                            <td>{admin_create_field}</td>
+                        </tr>
+                        {#if admin_update_field != ""}
+                        <tr>
+                            <td>Modified</td>
+                            <td>:</td>
+                            <td>{admin_update_field}</td>
+                        </tr>
+                        {/if}
+                    </table>
+                </slot:template>
+            </Panel_info>
+        {/if}
+        <div class="col-span-2 mt-2">
             <Button_custom 
                 on:click={() => {
                     handleSubmit();
                 }}
                 button_disable={buttonLoading_flag}
-                button_class=""
+                button_class="btn-block"
                 button_disable_class="{buttonLoading_class}"
                 button_title="Submit" />
         </div>

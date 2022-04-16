@@ -58,13 +58,11 @@
 		}else{
             if (json.status == 200) {
                 record = json.record;
-                totalrecord = record.length;
                 let recordlistrule = json.listadminrule;
                 let status_class = "";
-                let no = 0;
                 if (record != null) {
+                    totalrecord = record.length;
                     for (var i = 0; i < record.length; i++) {
-                        no = no + 1;
                         if (record[i]["admin_status"] == "ACTIVE") {
                             status_class = "bg-[#ebfbee] text-[#6ec07b]"
                         } else {
@@ -73,11 +71,13 @@
                         listHome = [
                             ...listHome,
                             {
-                                home_no: no,
+                                home_no: i + 1,
                                 home_username: record[i]["admin_username"],
                                 home_nama: record[i]["admin_nama"],
+                                home_email: record[i]["admin_email"],
+                                home_phone: record[i]["admin_phone"],
+                                home_idrule: record[i]["admin_idrule"],
                                 home_rule: record[i]["admin_rule"],
-                                home_timezone: record[i]["admin_timezone"],
                                 home_joindate: record[i]["admin_joindate"],
                                 home_lastlogin: record[i]["admin_lastlogin"],
                                 home_lastipaddres: record[i]["admin_lastipaddres"],
@@ -94,8 +94,8 @@
                         admin_listrule = [
                             ...admin_listrule,
                             {
-                                adminrule_idruleadmin:recordlistrule[i]["adminrule_idruleadmin"],
-                                adminrule_nmadmin:recordlistrule[i]["adminrule_idruleadmin"].toUpperCase(),
+                                adminrule_idrule:recordlistrule[i]["adminrule_idrule"],
+                                adminrule_nmrule:recordlistrule[i]["adminrule_nmrule"].toUpperCase(),
                             },
                         ];
                     }

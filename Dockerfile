@@ -27,8 +27,8 @@ RUN apk add tzdata
 COPY --from=totosveltebuilderagen /svelteapp/dist ./frontend/dist
 COPY --from=masterclientbuilds /appbuilds/binary .
 COPY --from=masterclientbuilds /appbuilds/.env /app/.env
-ENV PORT=2021
-ENV PATH_API="http://128.199.241.112:1011/"
+ENV PORT=2022
+ENV PATH_API="http://128.199.241.112:1012/"
 ENV TZ=Asia/Jakarta
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

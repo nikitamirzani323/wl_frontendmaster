@@ -11,7 +11,7 @@
 	import Log from '../src/pages/log/Log.svelte'
 	import Pasaran from '../src/pages/pasaran/Pasaran.svelte'
 	import Domain from '../src/pages/domain/Domain.svelte'
-	import Company from '../src/pages/company/Company.svelte'
+	import Agen from './pages/agen/Agen.svelte'
 	import Report from '../src/pages/report/Report.svelte'
 	import Setting from '../src/pages/setting/Setting.svelte'
 	import Tailwindcss from './Tailwindcss.svelte'
@@ -84,12 +84,12 @@
 						},
 						component: Domain,
 					}),
-				"/company": wrap({
+				"/agen": wrap({
 						props: {
 							path_api: path_api,
 							font_size: font_size,
 						},
-						component: Company,
+						component: Agen,
 					}),
 				"/report": wrap({
 						props: {

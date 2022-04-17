@@ -1,5 +1,5 @@
 <script>
-    import Home from "../company/Home.svelte";
+    import Home from "./Home.svelte";
     import Modal_alert from '../../components/Modal_alert.svelte' 
 
     export let path_api = ""
@@ -40,7 +40,9 @@
         }
     }
     async function initHome() {
-        const res = await fetch(path_api+"api/company", {
+        listHome = []
+        listcurrency = []
+        const res = await fetch(path_api+"api/agen", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -57,13 +59,13 @@
 		}else{
             if (json.status == 200) {
                 record = json.record;
-                totalrecord = record.length;
                 let recordlistcurr = json.listcurrency;
                 if (record != null) {
+                    totalrecord = record.length;
                     let home_status_text = "";
                     let home_status_class = "";
                     for (var i = 0; i < record.length; i++) {
-                        if(record[i]["company_status"] == "Y"){
+                        if(record[i]["agen_status"] == "Y"){
                             home_status_class = "bg-[#ebfbee] text-[#6ec07b]"
                             home_status_text = "ACTIVE"
                         }else{
@@ -74,17 +76,17 @@
                             ...listHome,
                             {
                                 home_no: i+1,
-                                home_idcompany: record[i]["company_idcompany"],
-                                home_startjoin: record[i]["company_startjoin"],
-                                home_endjoin: record[i]["company_endjoin"],
-                                home_curr: record[i]["company_idcurr"],
-                                home_name: record[i]["company_nmcompany"],
-                                home_owner: record[i]["company_nmowner"],
-                                home_phone: record[i]["company_phoneowner"],
-                                home_email: record[i]["company_emailowner"],
-                                home_urlendpoint: record[i]["company_urlendpoint"],
-                                home_create: record[i]["company_create"],
-                                home_update: record[i]["company_update"],
+                                home_idagen: record[i]["agen_idagen"],
+                                home_startjoin: record[i]["agen_startjoin"],
+                                home_endjoin: record[i]["agen_endjoin"],
+                                home_curr: record[i]["agen_idcurr"],
+                                home_name: record[i]["agen_nmagen"],
+                                home_owner: record[i]["agen_owneragen"],
+                                home_phone: record[i]["agen_ownerphone"],
+                                home_email: record[i]["agen_owneremail"],
+                                home_urlendpoint: record[i]["agen_urlendpoint"],
+                                home_create: record[i]["agen_create"],
+                                home_update: record[i]["agen_update"],
                                 home_status: home_status_text,
                                 home_status_class: home_status_class,
                                 

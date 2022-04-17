@@ -19,7 +19,7 @@
     export let listcurrency = [];
     export let totalrecord = 0;
 
-    let page = "Company";
+    let page = "Agen";
     let sData = "New";
     let sDataAdmin = "New";
     let isModal_Form_New = false
@@ -33,14 +33,12 @@
     let buttonLoading_flag = false;
     let buttonLoading_class = "btn-block";
     let msg_error = "";
-    let idcompany = "";
+    let idagendata = "";
     let listAdmin = [];
     let totalrecordadmin = 0;
     let tab_listadmin = "bg-sky-600 text-white"
     let tab_listpasaran = ""
     let panel_listadmin = true
-
-    
 
     let searchHome = "";
     let searchListAdmin = "";
@@ -70,22 +68,22 @@
     const schema = yup.object().shape({
         home_id_field: yup
             .string()
-            .required("IDCOMP is Required")
+            .required("IDAGEN is Required")
             .matches(
                 /^[A-z0-9]+$/,
-                "IDCOMP must Character A-Z "
+                "IDAGEN must Character A-Z "
             )
-            .min(3, "IDCOMP must be at least 4 Character")
-            .max(10, "IDCOMP must be at most 6 Character"),
+            .min(3, "IDAGEN must be at least 4 Character")
+            .max(10, "IDAGEN must be at most 6 Character"),
         home_name_field: yup
             .string()
-            .required("Company is Required")
+            .required("AGEN is Required")
             .matches(
                 /^[A-z0-9 ]+$/,
-                "Company must Character A-Z  or 1-9"
+                "AGEN must Character A-Z  or 1-9"
             )
-            .min(4, "Company must be at least 4 Character")
-            .max(70, "Company must be at most 70 Character"),
+            .min(4, "AGEN must be at least 4 Character")
+            .max(70, "AGEN must be at most 70 Character"),
         home_nameowner_field: yup
             .string()
             .required("Owner Name is Required")
@@ -128,7 +126,7 @@
         },
     });
     
-    async function SaveTransaksi(idcomp,namecomp,nameowner,phoneowner,emailowner,urlendpoint) {
+    async function SaveTransaksi(idagen,nameagen,nameowner,phoneowner,emailowner,urlendpoint) {
         let flag = true;
         msg_error = "";
         if(select_curr_field == ""){
@@ -143,7 +141,7 @@
             buttonLoading_flag = true;
             loader_class = "inline-block"
             loader_msg = "Sending..."
-            const res = await fetch(path_api+"api/savecompany", {
+            const res = await fetch(path_api+"api/saveagen", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -151,13 +149,13 @@
                 },
                 body: JSON.stringify({
                     sdata: sData,
-                    page: "COMPANY-SAVE",
-                    idcomp: idcomp,
+                    page: "AGEN-SAVE",
+                    idagen: idagen.toUpperCase(),
                     idcurr: select_curr_field,
-                    nmcompany: namecomp,
-                    nmowner: nameowner,
-                    phoneowner: phoneowner,
-                    emailowner: emailowner,
+                    nmagen: nameagen.toUpperCase(),
+                    ownername: nameowner,
+                    ownerphone: phoneowner,
+                    owneremail: emailowner,
                     urlendpoint: urlendpoint,
                     status: select_status_field,
                 }),
@@ -240,7 +238,7 @@
             buttonLoading_flag = true;
             loader_class = "inline-block"
             loader_msg = "Sending..."
-            const res = await fetch(path_api+"api/savecompanylistadmin", {
+            const res = await fetch(path_api+"api/saveagenlistadmin", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -248,8 +246,8 @@
                 },
                 body: JSON.stringify({
                     sdata: sDataAdmin,
-                    page: "COMPANY-SAVE",
-                    company: idcompany,
+                    page: "AGEN-SAVE",
+                    agen: idagendata,
                     username: admin_username_field.toLowerCase(),
                     password: admin_password_field,
                     name: admin_name_field,
@@ -279,20 +277,20 @@
                 setTimeout(function () {
                     loader_class = "hidden";
                 }, 1000);
-                call_listadmin();
+                call_listadmin(idagendata);
             }
         }
     };
-    async function call_listadmin() {
+    async function call_listadmin(e) {
         listAdmin = [];
-        const res = await fetch(path_api+"api/companylistadmin", {
+        const res = await fetch(path_api+"api/agenlistadmin", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
-                company: idcompany,
+                agen: e,
             }),
         });
         const json = await res.json();
@@ -300,27 +298,27 @@
             let record = json.record;
             if (record != null) {
                 totalrecordadmin = record.length;
-                let company_admin_status_class = "";
+                let agenadmin_status_class = "";
                 for (var i = 0; i < record.length; i++) {
-                    if(record[i]["companyadmin_status"] == "ACTIVE"){
-                        company_admin_status_class = "bg-[#ebfbee] text-[#6ec07b]"
+                    if(record[i]["agenadmin_status"] == "ACTIVE"){
+                        agenadmin_status_class = "bg-[#ebfbee] text-[#6ec07b]"
                     }else{
-                        company_admin_status_class = "bg-[#fde3e3] text-[#ea7779]"
+                        agenadmin_status_class = "bg-[#fde3e3] text-[#ea7779]"
                     }
                     listAdmin = [
                         ...listAdmin,
                         {
-                            companyadmin_username:record[i]["companyadmin_username"],
-                            companyadmin_name:record[i]["companyadmin_name"],
-                            companyadmin_phone:record[i]["companyadmin_phone"],
-                            companyadmin_email:record[i]["companyadmin_email"],
-                            companyadmin_type:record[i]["companyadmin_type"],
-                            companyadmin_status:record[i]["companyadmin_status"],
-                            companyadmin_status_class:company_admin_status_class,
-                            companyadmin_lastlogin:record[i]["companyadmin_lastlogin"],
-                            companyadmin_lastipaddress:record[i]["companyadmin_lastipaddress"],
-                            companyadmin_create:record[i]["companyadmin_create"],
-                            companyadmin_update:record[i]["companyadmin_update"],
+                            agenadmin_username:record[i]["agenadmin_username"],
+                            agenadmin_name:record[i]["agenadmin_name"],
+                            agenadmin_phone:record[i]["agenadmin_phone"],
+                            agenadmin_email:record[i]["agenadmin_email"],
+                            agenadmin_type:record[i]["agenadmin_type"],
+                            agenadmin_status:record[i]["agenadmin_status"],
+                            agenadmin_status_class:agenadmin_status_class,
+                            agenadmin_lastlogin:record[i]["agenadmin_lastlogin"],
+                            agenadmin_lastipaddress:record[i]["agenadmin_lastipaddress"],
+                            agenadmin_create:record[i]["agenadmin_create"],
+                            agenadmin_update:record[i]["agenadmin_update"],
                         },
                     ];
                 }
@@ -331,10 +329,9 @@
     const RefreshHalaman = () => {
         dispatch("handleRefreshData", "call");
     };
-    const EntryData = (tipeentry,idcomp,nmcompany,ownername,ownerphone,owneremail,endpoint,curr,status,create,update) => {
+    const EntryData = (tipeentry,idagen,nmcompany,ownername,ownerphone,owneremail,endpoint,curr,status,create,update) => {
         if(tipeentry == "Edit"){
             clearField();
-            
             sData = "Edit";
             modal_width = "max-w-7xl"
             if(status == "ACTIVE"){
@@ -342,8 +339,9 @@
             }else{
                 status = "N"
             }
-            idcompany = idcomp;
-            $form.home_id_field = idcomp;
+            
+            idagendata = idagen;
+            $form.home_id_field = idagen;
             $form.home_name_field = nmcompany;
             $form.home_nameowner_field = ownername;
             $form.home_phoneowner_field = ownerphone;
@@ -353,7 +351,7 @@
             select_status_field = status;
             home_create = create;
             home_update = update;
-            call_listadmin();
+            call_listadmin(idagen);
         }else{
             sData = "New";
             modal_width = "max-w-2xl"
@@ -364,18 +362,18 @@
     const NewData = () => {
         EntryData("New","","","","","","","","","","")
     };
-    const EntryDataAdmin = (e,usernameadmincomp,nmadmincomp,phoneadmincomp,emailadmincomp,stausadmincomp,create,update) => {
+    const EntryDataAdmin = (e,usernameadminagen,nmadminagen,phoneadminagen,emailadminagen,statusadminagen,create,update) => {
         sDataAdmin = e;
-        modal_listadmin_width = "max-w-xl"
+        modal_listadmin_width = "max-w-2xl"
         isModal_Form_admin = true;
         if(e == "Edit"){
             admin_username_enable_field = false
-            admin_username_field = usernameadmincomp;
+            admin_username_field = usernameadminagen;
             admin_password_field = "";
-            admin_name_field = nmadmincomp;
-            admin_phone_field = phoneadmincomp;
-            admin_email_field = emailadmincomp;
-            admin_status_field = stausadmincomp;
+            admin_name_field = nmadminagen;
+            admin_phone_field = phoneadminagen;
+            admin_email_field = emailadminagen;
+            admin_status_field = statusadminagen;
             admin_create = create;
             admin_update = update;
         }else{
@@ -402,7 +400,7 @@
     }
     
     function clearField(){
-        idcompany = "";
+        idagendata = "";
         $form.home_id_field = "";
         $form.home_name_field = "";
         $form.home_nameowner_field = "";
@@ -420,6 +418,7 @@
     }
     function clearFieldListAdmin(){
         admin_password_field = "";
+        admin_username_field = "";
         admin_name_field = "";
         admin_email_field = "";
         admin_phone_field = "";
@@ -438,7 +437,7 @@
         if (searchHome) {
             filterHome = listHome.filter(
                 (item) =>
-                    item.home_name
+                    item.home_idagen
                         .toLowerCase()
                         .includes(searchHome.toLowerCase())
             );
@@ -475,7 +474,7 @@
         </div>
         <input 
             bind:value={searchHome}
-            type="text" placeholder="Search by IDComp, Company" class="input input-bordered w-full max-w-full rounded-md pl-8 pr-4 focus:ring-0 focus:outline-none">
+            type="text" placeholder="Search by IDAGEN, Agen" class="input input-bordered w-full max-w-full rounded-md pl-8 pr-4 focus:ring-0 focus:outline-none">
     </slot:template>
     <slot:template slot="panel_body">
         <table class="table table-compact w-full ">
@@ -487,11 +486,11 @@
                     <th width="10%" class="bg-[#475289] {font_size}  text-white text-center">START JOIN</th>
                     <th width="10%" class="bg-[#475289] {font_size}  text-white text-center">END JOIN</th>
                     <th width="5%" class="bg-[#475289] {font_size}  text-white text-left">CURR</th>
-                    <th width="5%" class="bg-[#475289] {font_size}  text-white text-left">IDCOMP</th>
-                    <th width="*" class="bg-[#475289] {font_size}  text-white text-left">COMPANY</th>
-                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">OWNER</th>
-                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">EMAIL</th>
-                    <th width="10%" class="bg-[#475289] {font_size} text-white text-left">PHONE</th>
+                    <th width="5%" class="bg-[#475289] {font_size}  text-white text-left">IDAGEN</th>
+                    <th width="*" class="bg-[#475289] {font_size}  text-white text-left">AGEN</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">OWNER</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">EMAIL</th>
+                    <th width="15%" class="bg-[#475289] {font_size} text-white text-left">PHONE</th>
                 </tr>
             </thead>
             {#if filterHome != ""}
@@ -499,7 +498,7 @@
                     {#each filterHome as rec}
                     <tr>
                         <td on:click={() => {
-                            EntryData("Edit",rec.home_idcompany,rec.home_name,rec.home_owner,rec.home_phone,rec.home_email,rec.home_urlendpoint,
+                            EntryData("Edit",rec.home_idagen,rec.home_name,rec.home_owner,rec.home_phone,rec.home_email,rec.home_urlendpoint,
                                 rec.home_curr,rec.home_status,rec.home_create,rec.home_update);
                             }} class="text-center text-xs cursor-pointer">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -513,7 +512,7 @@
                         <td class="{font_size} align-top text-left">{rec.home_startjoin}</td>
                         <td class="{font_size} align-top text-left">{rec.home_endjoin}</td>
                         <td class="{font_size} align-top text-left">{rec.home_curr}</td>
-                        <td class="{font_size} align-top text-left">{rec.home_idcompany}</td>
+                        <td class="{font_size} align-top text-left">{rec.home_idagen}</td>
                         <td class="{font_size} align-top text-left">{rec.home_name}</td>
                         <td class="{font_size} align-top text-left">{rec.home_owner}</td>
                         <td class="{font_size} align-top text-left">{rec.home_email}</td>
@@ -555,7 +554,7 @@
                         input_invalid={$errors.home_id_field.length > 0}
                         bind:value={$form.home_id_field}
                         input_id="home_id_field"
-                        input_placeholder="IDCOMP"/>
+                        input_placeholder="IDAGEN"/>
                     {#if $errors.home_id_field}
                         <small class="text-pink-600 text-[11px]">{$errors.home_id_field}</small>
                     {/if}
@@ -587,7 +586,7 @@
                         input_invalid={$errors.home_name_field.length > 0}
                         bind:value={$form.home_name_field}
                         input_id="home_name_field"
-                        input_placeholder="Company"/>
+                        input_placeholder="Agen"/>
                     {#if $errors.home_name_field}
                         <small class="text-pink-600 text-[11px]">{$errors.home_name_field}</small>
                     {/if}
@@ -773,7 +772,7 @@
                         <div>
                             <select
                                 bind:value="{select_curr_field}" 
-                                class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm">
+                                class="select select-bordered w-full focus:ring-0 focus:outline-none rounded-sm" disabled>
                                 <option disabled value="" selected>--Pilih Currency--</option>
                                 {#each listcurrency as rec }
                                     <option value="{rec.curr_idcurr}">{rec.curr_idcurr}</option>
@@ -861,20 +860,20 @@
                                         {#each filterListAdmin as rec}
                                             <tr>
                                                 <td class="cursor-pointer" on:click={() => {
-                                                        EntryDataAdmin("Edit",rec.companyadmin_username,rec.companyadmin_name,rec.companyadmin_phone,rec.companyadmin_email,
-                                                        rec.companyadmin_status,rec.companyadmin_create,rec.companyadmin_update);
+                                                        EntryDataAdmin("Edit",rec.agenadmin_username,rec.agenadmin_name,rec.agenadmin_phone,rec.agenadmin_email,
+                                                        rec.agenadmin_status,rec.agenadmin_create,rec.agenadmin_update);
                                                     }}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                     </svg>
                                                 </td>
                                                 <td class="{font_size} text-center align-top">
-                                                    <span class="{rec.companyadmin_status_class} text-center rounded-md p-1 px-2 ">{rec.companyadmin_status}</span>
+                                                    <span class="{rec.agenadmin_status_class} text-center rounded-md p-1 px-2 ">{rec.agenadmin_status}</span>
                                                 </td>
-                                                <td class="{font_size} text-left align-top">{rec.companyadmin_type}</td>
-                                                <td class="{font_size} text-center align-top">{rec.companyadmin_lastlogin}</td>
-                                                <td class="{font_size} text-center align-top">{rec.companyadmin_lastipaddress}</td>
-                                                <td class="{font_size} text-left align-top">{rec.companyadmin_username}</td>
+                                                <td class="{font_size} text-left align-top">{rec.agenadmin_type}</td>
+                                                <td class="{font_size} text-center align-top">{rec.agenadmin_lastlogin}</td>
+                                                <td class="{font_size} text-center align-top">{rec.agenadmin_lastipaddress}</td>
+                                                <td class="{font_size} text-left align-top">{rec.agenadmin_username}</td>
                                             </tr>
                                         {/each}
                                     {:else}
@@ -907,15 +906,15 @@
     modal_popup_title="Admin Entry/{sDataAdmin}"
     modal_popup_class="select-none w-11/12 {modal_listadmin_width} scrollbar-thin scrollbar-thumb-sky-300 scrollbar-track-sky-100">
     <slot:template slot="modalpopup_body">
-        <div class="flex flex-col gap-2">
-            <div class="mt-2">
+        <div class="grid grid-cols-2 gap-2 mt-2">
+            <div>
                 <Input_custom
                     input_autofocus={false}
                     input_required={true}
                     input_enabled={admin_username_enable_field}
                     input_tipe="text"
                     input_text_class="lowercase"
-                    input_maxlength_text="40"
+                    input_maxlength_text="30"
                     bind:value={admin_username_field}
                     input_id="admin_username_field"
                     input_placeholder="Username"/>
@@ -1016,7 +1015,7 @@
                     SaveTransaksiListAdmin();
                 }}
                 button_disable={buttonLoading_flag}
-                button_class=""
+                button_class="btn-block col-span-2"
                 button_disable_class="{buttonLoading_class}"
                 button_title="Submit" />
         </div>

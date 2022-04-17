@@ -9,22 +9,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type responsecompany struct {
+type responseagen struct {
 	Status   int         `json:"status"`
 	Message  string      `json:"message"`
 	Listcurr interface{} `json:"listcurrency"`
 	Record   interface{} `json:"record"`
 }
 
-func Company(c *fiber.Ctx) error {
-	type payload_company struct {
+func Agen(c *fiber.Ctx) error {
+	type payload_agen struct {
 		Master string `json:"master"`
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
 	token := strings.Split(bearToken, " ")
 	log.Println("Hostname: ", hostname)
-	client := new(payload_company)
+	client := new(payload_agen)
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -37,7 +37,7 @@ func Company(c *fiber.Ctx) error {
 	render_page := time.Now()
 	axios := resty.New()
 	resp, err := axios.R().
-		SetResult(responsecompany{}).
+		SetResult(responseagen{}).
 		SetAuthToken(token[1]).
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
@@ -45,12 +45,12 @@ func Company(c *fiber.Ctx) error {
 			"client_hostname": hostname,
 			"master":          client.Master,
 		}).
-		Post(PATH + "api/company")
+		Post(PATH + "api/agen")
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	result := resp.Result().(*responsecompany)
+	result := resp.Result().(*responseagen)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
 			"status":       result.Status,
@@ -68,16 +68,16 @@ func Company(c *fiber.Ctx) error {
 		})
 	}
 }
-func Companysave(c *fiber.Ctx) error {
+func Agensave(c *fiber.Ctx) error {
 	type company_save struct {
 		Sdata       string `json:"sdata"`
 		Page        string `json:"page"`
-		Idcomp      string `json:"idcomp"`
+		Idagen      string `json:"idagen"`
 		Idcurr      string `json:"idcurr"`
-		Nmcompany   string `json:"nmcompany"`
-		Nmowner     string `json:"nmowner"`
-		Phoneowner  string `json:"phoneowner"`
-		Emailowner  string `json:"emailowner"`
+		Nmagen      string `json:"nmagen"`
+		Ownername   string `json:"ownername"`
+		Ownerphone  string `json:"ownerphone"`
+		Owneremail  string `json:"owneremail"`
 		Urlendpoint string `json:"urlendpoint"`
 		Status      string `json:"status"`
 	}
@@ -103,19 +103,19 @@ func Companysave(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname":     hostname,
-			"page":                client.Page,
-			"sdata":               client.Sdata,
-			"company_idcompany":   client.Idcomp,
-			"company_idcurr":      client.Idcurr,
-			"company_nmcompany":   client.Nmcompany,
-			"company_nmowner":     client.Nmowner,
-			"company_phoneowner":  client.Phoneowner,
-			"company_emailowner":  client.Emailowner,
-			"company_urlendpoint": client.Urlendpoint,
-			"company_status":      client.Status,
+			"client_hostname":  hostname,
+			"page":             client.Page,
+			"sdata":            client.Sdata,
+			"agen_idagen":      client.Idagen,
+			"agen_idcurr":      client.Idcurr,
+			"agen_nmagen":      client.Nmagen,
+			"agen_owneragen":   client.Ownername,
+			"agen_ownerphone":  client.Ownerphone,
+			"agen_owneremail":  client.Owneremail,
+			"agen_urlendpoint": client.Urlendpoint,
+			"agen_status":      client.Status,
 		}).
-		Post(PATH + "api/savecompany")
+		Post(PATH + "api/saveagen")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -145,15 +145,15 @@ func Companysave(c *fiber.Ctx) error {
 		})
 	}
 }
-func Companylistadmin(c *fiber.Ctx) error {
-	type payload_company struct {
-		Idcompany string `json:"company"`
+func Agenlistadmin(c *fiber.Ctx) error {
+	type payload_agenadmin struct {
+		Idagen string `json:"agen"`
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
 	token := strings.Split(bearToken, " ")
 	log.Println("Hostname: ", hostname)
-	client := new(payload_company)
+	client := new(payload_agenadmin)
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -172,13 +172,21 @@ func Companylistadmin(c *fiber.Ctx) error {
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
 			"client_hostname": hostname,
-			"idcompany":       client.Idcompany,
+			"idagen":          client.Idagen,
 		}).
-		Post(PATH + "api/companylistadmin")
+		Post(PATH + "api/agenlistadmin")
 	if err != nil {
 		log.Println(err.Error())
 	}
-
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
 	result := resp.Result().(*responsedefault)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
@@ -196,11 +204,11 @@ func Companylistadmin(c *fiber.Ctx) error {
 		})
 	}
 }
-func Companysavelistadmin(c *fiber.Ctx) error {
+func Agensavelistadmin(c *fiber.Ctx) error {
 	type company_save struct {
 		Sdata    string `json:"sdata"`
 		Page     string `json:"page"`
-		Idcomp   string `json:"company"`
+		Idagen   string `json:"agen"`
 		Username string `json:"username"`
 		Password string `json:"password"`
 		Name     string `json:"name"`
@@ -230,18 +238,18 @@ func Companysavelistadmin(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname":        hostname,
-			"page":                   client.Page,
-			"sdata":                  client.Sdata,
-			"companyadmin_idcompany": client.Idcomp,
-			"companyadmin_username":  client.Username,
-			"companyadmin_password":  client.Password,
-			"companyadmin_name":      client.Name,
-			"companyadmin_email":     client.Email,
-			"companyadmin_phone":     client.Phone,
-			"companyadmin_status":    client.Status,
+			"client_hostname":    hostname,
+			"page":               client.Page,
+			"sdata":              client.Sdata,
+			"agen_idagen":        client.Idagen,
+			"agenadmin_username": client.Username,
+			"agenadmin_password": client.Password,
+			"agenadmin_name":     client.Name,
+			"agenadmin_phone":    client.Phone,
+			"agenadmin_email":    client.Email,
+			"agenadmin_status":   client.Status,
 		}).
-		Post(PATH + "api/savecompanylistadmin")
+		Post(PATH + "api/saveagenlistadmin")
 	if err != nil {
 		log.Println(err.Error())
 	}
